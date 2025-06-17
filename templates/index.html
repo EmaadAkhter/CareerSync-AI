@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Career Matcher - Chat</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      max-width: 70%;
+      padding: 12px 18px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .bot {
+      background: rgba(255,255,255,0.15);
+      align-self: flex-start;
+    }
+    .user {
+      background: rgba(255,255,255,0.9);
+      color: black;
+      align-self: flex-end;
+    }
+    .input-container {
+      display: flex;
+      padding: 15px;
+      background: #fff;
+    }
+    .input-container textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      height: 50px;
+      overflow-y: auto;
+    }
+    .input-container textarea:focus {
+      outline: none;
+    }
+    .input-container button {
+      display: none;
+    }
+
+    .result-title {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 30px 0 20px;
+      background: linear-gradient(90deg, #ff9ff3, #48dbfb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .career-card {
+      background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb);
+      padding: 20px;
+      border-radius: 15px;
+      color: white;
+      margin: 10px 0;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      animation: fadeInUp 0.4s ease;
+    }
+
+    .career-card h3 {
+      margin: 0 0 10px;
+    }
+
+    .career-card p {
+      margin: 5px 0;
+    }
+
+    .career-card .match {
+      font-weight: bold;
+      margin-top: 10px;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+    }
+
+    .signature {
+      text-align: center;
+      font-size: 0.9rem;
+      margin: 30px 0 10px;
+      opacity: 0.75;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container" id="chat">
+    <div class="result-title">🎯 AI Career Matcher</div>
+  </div>
+
+  <form class="input-container" id="chatForm">
+    <textarea id="chatInput" placeholder="Type your response..." required></textarea>
+    <button type="submit">Send</button>
+  </form>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+
+   const questions = [
+  {
+    name: 'interests',
+    text: "Describe a moment when you were so engaged in an activity that you lost track of time. What were you doing and why did it feel so rewarding?",
+    followups: [
+      { name: 'interests_fulltime', text: "Could you imagine dedicating your career to something similar? Why or why not?" },
+      { name: 'interests_appeal', text: "What aspects of that experience appealed to you — the process, the challenge, the purpose?" }
+    ]
+  },
+  {
+    name: 'skills',
+    text: "What kind of tasks or challenges do people naturally turn to you for help with? What makes you good at them?",
+    followups: [
+      { name: 'skills_natural', text: "Do you feel those abilities come naturally, or were they cultivated through experience?" },
+      { name: 'skills_energized', text: "How do you feel during and after using these strengths — energized, confident, proud?" }
+    ]
+  },
+  {
+    name: 'problem_solving',
+    text: "Tell a story about a time you solved a difficult problem. What was the situation, what was your approach, and how did it feel?",
+    followups: [
+      { name: 'problem_method', text: "Do you enjoy working through ambiguity, or do you prefer clear, defined problems?" },
+      { name: 'problem_enjoy', text: "What gives you satisfaction in problem-solving — figuring it out, helping others, or achieving results?" }
+    ]
+  },
+  {
+    name: 'work_style',
+    text: "Think about your best work experience so far. What environment were you in, and what made it ideal for you?",
+    followups: [
+      { name: 'work_routine', text: "How important is autonomy versus structure in your day-to-day tasks?" },
+      { name: 'work_goals', text: "Do you perform better with well-defined outcomes or creative freedom to explore?" }
+    ]
+  },
+  {
+    name: 'values',
+    text: "What kind of legacy would you like your work to leave behind — in people, society, or the world?",
+    followups: [
+      { name: 'values_why', text: "What personal experiences or beliefs shape these values for you?" },
+      { name: 'values_choice', text: "Would you rather do work you're passionate about, or work you're exceptionally skilled at (if you had to choose)?" }
+    ]
+  },
+  {
+    name: 'career_inspiration',
+    text: "Can you recall a time you felt envious (inspired) by someone else's job or life path? What specifically about it excited you?",
+    followups: [
+      { name: 'inspiration_standout', text: "Was it the kind of work, the lifestyle, the independence, or something else?" },
+      { name: 'inspiration_pursue', text: "If given the resources and time, would you try to pursue that path now?" }
+    ]
+  },
+  {
+    name: 'environment_preference',
+    text: "Describe the kind of space — physical or digital — where you feel your most creative and productive. What are its qualities?",
+    followups: [
+      { name: 'environment_why', text: "Why does that environment bring out your best performance?" },
+      { name: 'focus_preference', text: "Do you prefer analytical thinking, hands-on building, creative ideation, or people-oriented work?" },
+      { name: 'focus_ideas', text: "Would you rather come up with ideas or bring someone else's ideas to life?" }
+    ]
+  },
+  {
+    name: 'impact_preference',
+    text: "If your career could make a difference in one specific domain — people’s lives, science/technology, the environment, or culture — which would you choose and why?",
+    followups: [
+      { name: 'impact_why', text: "What motivates your desire to make that kind of difference?" }
+    ]
+  }
+];
+
+    let currentIndex = 0;
+    let currentFollowups = [];
+    let askingFollowup = false;
+    const responses = {};
+
+    function addMessage(text, sender = 'bot') {
+      const message = document.createElement('div');
+      message.className = `message ${sender}`;
+      message.textContent = text;
+      chat.appendChild(message);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function shouldAskFollowups(answer) {
+      return answer.trim().length < 30; // Consider vague if too short
+    }
+
+    function askNextQuestion() {
+      if (askingFollowup && currentFollowups.length > 0) {
+        addMessage(currentFollowups[0].text, 'bot');
+      } else if (currentIndex < questions.length) {
+        addMessage(questions[currentIndex].text, 'bot');
+      } else {
+        submitForm();
+      }
+    }
+
+    function submitForm() {
+      addMessage('Thank you! Matching you to careers...', 'bot');
+
+      fetch('/api/match-careers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(responses)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.matches && data.matches.length > 0) {
+          data.matches.slice(0, 3).forEach(match => {
+            const card = document.createElement('div');
+            card.className = 'career-card';
+            card.innerHTML = `
+              <h3>🚀 ${match.job_title}</h3>
+              <div class="match">${Math.round(match.match_percentage)}% Match</div>
+              <p><strong>Description:</strong> ${match.description}</p>
+              <p><strong>Key Skills:</strong> ${match.skills}</p>
+              <p><strong>Why this matches:</strong> ${match.reasoning}</p>
+            `;
+            chat.appendChild(card);
+          });
+
+          const footer = document.createElement('div');
+          footer.className = 'signature';
+          const today = new Date().toLocaleDateString();
+          footer.innerHTML = `— Created by <strong>emaad akhter</strong> on ${today}`;
+          chat.appendChild(footer);
+        } else {
+          addMessage('No strong matches found. Try giving more details.', 'bot');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        addMessage('Something went wrong. Please try again later.', 'bot');
+      });
+    }
+
+    chatForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const input = chatInput.value.trim();
+      if (!input) return;
+
+      addMessage(input, 'user');
+      chatInput.value = '';
+
+      if (askingFollowup && currentFollowups.length > 0) {
+        const followup = currentFollowups.shift();
+        responses[followup.name] = input;
+      } else {
+        const q = questions[currentIndex];
+        responses[q.name] = input;
+
+        if (q.followups && shouldAskFollowups(input)) {
+          currentFollowups = [...q.followups];
+        }
+      }
+
+      askingFollowup = currentFollowups.length > 0;
+      if (!askingFollowup) currentIndex++;
+      setTimeout(askNextQuestion, 500);
+    });
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        chatForm.dispatchEvent(new Event('submit'));
+      }
+    });
+
+    askNextQuestion();
+  </script>
+</body>
+</html>
