@@ -144,7 +144,7 @@ We welcome contributions! Here's how you can help:
 ### Development Setup
 ```bash
 # Install development dependencies
-pip install -r requirements-dev.txt
+pip install -r requirements.txt
 
 # Run tests
 python -m pytest
