@@ -108,7 +108,7 @@ const App = () => {
     setMatches([]);
 
     try {
-      const response = await fetch('http://localhost:5001/api/match-careers', {
+      const response = await fetch('https://careersync-ai-1.onrender.com/api/match-careers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
