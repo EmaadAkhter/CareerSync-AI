@@ -62,7 +62,10 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=["https://career-sync-ai-ten.vercel.app",
+                   "https://career-sync-ai-ten.vercel.app",
+                   "career-sync-ai-git-main-emaadansaris-projects.vercel.app",
+                   "career-sync-njy77dgk3-emaadansaris-projects.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
