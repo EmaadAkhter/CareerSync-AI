@@ -33,8 +33,7 @@ async def lifespan(app: FastAPI):
             raise FileNotFoundError(f"Directory {base_path} not found")
 
         logger.info("Loading model...")
-        state.model = SentenceTransformer("all-MiniLM-L6-v2")
-
+        state.model = SentenceTransformer("paraphrase-MiniLM-L3-v2", device="cpu")
         logger.info("Loading career data...")
         state.df = pd.read_csv(base_path / "occ.csv")
         logger.info(f"Loaded {len(state.df)} careers")
