@@ -6,8 +6,7 @@ import os
 import sys
 from tqdm import tqdm
 
-# High-quality model (larger, slower, better quality)
-MODEL_NAME = "all-MiniLM-L6-v2"
+MODEL_NAME = "paraphrase-MiniLM-L3-v2"
 EMBEDDINGS_FILE = "career_embeddings.pkl"
 CSV_FILE = "occ.csv"
 
