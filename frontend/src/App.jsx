@@ -109,7 +109,7 @@ const App = () => {
 
     try {
       // FIXED: Use localhost instead of 0.0.0.0
-      const response = await fetch('http://localhost:8000/api/match-careers', {
+      const response = await fetch('https://careersync-ai-1.onrender.com/api/match-careers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
