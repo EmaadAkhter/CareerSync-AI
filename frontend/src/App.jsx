@@ -5,7 +5,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Interests',
     icon: Sparkles,
-    color: 'from-blue-500 to-cyan-500',
+    color: '#3b82f6',
     questions: [
       { key: 'interests', label: 'What topics or activities genuinely interest you?', required: true },
       { key: 'interests_fulltime', label: 'Could you see yourself working full-time in this area?' },
@@ -15,7 +15,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Skills',
     icon: TrendingUp,
-    color: 'from-emerald-500 to-teal-500',
+    color: '#10b981',
     questions: [
       { key: 'skills', label: 'What are you naturally good at?', required: true },
       { key: 'skills_natural', label: 'What skills come most naturally to you?' },
@@ -25,7 +25,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Problem Solving',
     icon: CheckCircle,
-    color: 'from-slate-600 to-slate-700',
+    color: '#475569',
     questions: [
       { key: 'problem_solving', label: 'What types of problems do you enjoy solving?' },
       { key: 'problem_method', label: 'How do you typically approach problem-solving?' },
@@ -35,7 +35,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Work Style',
     icon: Briefcase,
-    color: 'from-orange-500 to-amber-500',
+    color: '#f97316',
     questions: [
       { key: 'work_style', label: 'Do you prefer working alone, in teams, or a mix?' },
       { key: 'work_routine', label: 'Structured routines or flexible schedules?' },
@@ -45,7 +45,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Values',
     icon: Book,
-    color: 'from-indigo-500 to-blue-600',
+    color: '#6366f1',
     questions: [
       { key: 'values', label: 'What matters most to you in a career?', required: true },
       { key: 'values_why', label: 'Why are these values important to you?' },
@@ -55,7 +55,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Inspiration',
     icon: Sparkles,
-    color: 'from-rose-500 to-pink-500',
+    color: '#ec4899',
     questions: [
       { key: 'career_inspiration', label: 'What careers or professionals inspire you?' },
       { key: 'inspiration_standout', label: 'What makes them stand out to you?' },
@@ -65,7 +65,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Environment',
     icon: TrendingUp,
-    color: 'from-teal-500 to-cyan-600',
+    color: '#14b8a6',
     questions: [
       { key: 'environment_preference', label: 'What work environment do you thrive in?' },
       { key: 'environment_why', label: 'Why does this environment work best for you?' },
@@ -75,7 +75,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Impact',
     icon: DollarSign,
-    color: 'from-gray-600 to-slate-700',
+    color: '#64748b',
     questions: [
       { key: 'impact_preference', label: 'What kind of impact do you want to make?' },
       { key: 'impact_why', label: 'Why is this impact important to you?' }
@@ -177,85 +177,184 @@ const CareerPathFinder = () => {
   }, [matches]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-gray-800">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob" />
-        <div className="absolute top-40 right-10 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-teal-400 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-4000" />
-      </div>
-
-      <div className="relative z-10 px-4 py-12 max-w-4xl mx-auto">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #1f2937 100%)',
+      padding: '48px 16px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    }}>
+      <div style={{ maxWidth: '896px', margin: '0 auto' }}>
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-lg rounded-2xl mb-6 shadow-2xl">
-            <Briefcase className="w-10 h-10 text-white" />
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '80px',
+            height: '80px',
+            background: 'rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            marginBottom: '24px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+          }}>
+            <Briefcase style={{ width: '40px', height: '40px', color: 'white' }} />
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+          <h1 style={{
+            fontSize: '56px',
+            fontWeight: '700',
+            color: 'white',
+            marginBottom: '16px',
+            letterSpacing: '-0.025em'
+          }}>
             Career Path Finder
           </h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">
+          <p style={{
+            fontSize: '20px',
+            color: 'rgba(255,255,255,0.8)',
+            maxWidth: '672px',
+            margin: '0 auto'
+          }}>
             Discover careers that align with your passions, skills, and values
           </p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-8 md:p-12 mb-8">
+        <div style={{
+          background: 'rgba(255,255,255,0.95)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '24px',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+          padding: '48px',
+          marginBottom: '32px'
+        }}>
           {/* Progress Bar */}
-          <div className="mb-10">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-sm font-semibold text-gray-700">
+          <div style={{ marginBottom: '40px' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '12px'
+            }}>
+              <span style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#374151'
+              }}>
                 Step {currentStep + 1} of {QUESTIONS_CONFIG.length}
               </span>
-              <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              <span style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#3b82f6'
+              }}>
                 {Math.round(progress)}% Complete
               </span>
             </div>
-            <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 rounded-full transition-all duration-500 ease-out"
-                style={{ width: `${progress}%` }}
-              />
+            <div style={{
+              width: '100%',
+              height: '12px',
+              background: '#f3f4f6',
+              borderRadius: '999px',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                width: `${progress}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%)',
+                borderRadius: '999px',
+                transition: 'width 0.5s ease-out'
+              }} />
             </div>
           </div>
 
           {/* Section Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className={`flex items-center justify-center w-16 h-16 bg-gradient-to-br ${currentSection.color} rounded-2xl shadow-lg`}>
-              <SectionIcon className="w-8 h-8 text-white" />
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '32px'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '64px',
+              height: '64px',
+              background: currentSection.color,
+              borderRadius: '16px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }}>
+              <SectionIcon style={{ width: '32px', height: '32px', color: 'white' }} />
             </div>
-            <h2 className="text-4xl font-bold text-gray-900">
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '700',
+              color: '#111827'
+            }}>
               {currentSection.section}
             </h2>
           </div>
 
           {/* Questions */}
-          <div className="space-y-8">
-            {currentSection.questions.map((q, idx) => (
-              <div key={q.key} className="group">
-                <label className="block mb-3">
-                  <span className="text-base font-semibold text-gray-800">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {currentSection.questions.map((q) => (
+              <div key={q.key}>
+                <label style={{ display: 'block', marginBottom: '12px' }}>
+                  <span style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#1f2937'
+                  }}>
                     {q.label}
-                    {q.required && <span className="text-red-500 ml-1">*</span>}
+                    {q.required && <span style={{ color: '#ef4444', marginLeft: '4px' }}>*</span>}
                   </span>
                 </label>
                 <textarea
                   value={formData[q.key]}
                   onChange={(e) => handleChange(q.key, e.target.value)}
-                  className={`w-full px-5 py-4 border-2 rounded-xl text-gray-800 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 resize-none ${
-                    validationErrors[q.key] 
-                      ? 'border-red-400 bg-red-50' 
-                      : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
-                  }`}
-                  rows={4}
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    border: validationErrors[q.key] ? '2px solid #f87171' : '2px solid #e5e7eb',
+                    borderRadius: '12px',
+                    fontSize: '15px',
+                    color: '#1f2937',
+                    background: validationErrors[q.key] ? '#fef2f2' : 'white',
+                    fontFamily: 'inherit',
+                    resize: 'vertical',
+                    minHeight: '100px',
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                    boxSizing: 'border-box'
+                  }}
+                  onFocus={(e) => {
+                    if (!validationErrors[q.key]) {
+                      e.target.style.borderColor = '#3b82f6';
+                      e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)';
+                    }
+                  }}
+                  onBlur={(e) => {
+                    if (!validationErrors[q.key]) {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.boxShadow = 'none';
+                    }
+                  }}
                   placeholder="Share your thoughts in detail..."
                   aria-label={q.label}
                   aria-required={q.required}
                   aria-invalid={!!validationErrors[q.key]}
                 />
                 {validationErrors[q.key] && (
-                  <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
-                    <AlertCircle className="w-4 h-4" />
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginTop: '8px',
+                    color: '#dc2626',
+                    fontSize: '14px'
+                  }}>
+                    <AlertCircle style={{ width: '16px', height: '16px' }} />
                     <span>{validationErrors[q.key]}</span>
                   </div>
                 )}
@@ -264,11 +363,39 @@ const CareerPathFinder = () => {
           </div>
 
           {/* Navigation */}
-          <div className="flex justify-between items-center mt-12 pt-8 border-t-2 border-gray-100">
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '48px',
+            paddingTop: '32px',
+            borderTop: '2px solid #f3f4f6'
+          }}>
             <button
               onClick={prevStep}
               disabled={currentStep === 0}
-              className="px-8 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 active:scale-95"
+              style={{
+                padding: '12px 32px',
+                border: '2px solid #d1d5db',
+                borderRadius: '12px',
+                background: 'white',
+                color: '#374151',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
+                opacity: currentStep === 0 ? 0.4 : 1,
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                if (currentStep !== 0) {
+                  e.currentTarget.style.background = '#f9fafb';
+                  e.currentTarget.style.borderColor = '#9ca3af';
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'white';
+                e.currentTarget.style.borderColor = '#d1d5db';
+              }}
             >
               Previous
             </button>
@@ -277,27 +404,69 @@ const CareerPathFinder = () => {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="group relative px-10 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-2xl hover:scale-105 transition-all duration-200 active:scale-95 overflow-hidden"
+                style={{
+                  padding: '16px 40px',
+                  border: 'none',
+                  borderRadius: '12px',
+                  background: loading ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  boxShadow: loading ? 'none' : '0 4px 16px rgba(59, 130, 246, 0.4)',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseOver={(e) => {
+                  if (!loading) {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246, 0.5)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = loading ? 'none' : '0 4px 16px rgba(59, 130, 246, 0.4)';
+                }}
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Analyzing...
-                    </>
-                  ) : (
-                    'Find My Careers'
-                  )}
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                {loading && (
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    border: '2px solid white',
+                    borderTopColor: 'transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 0.8s linear infinite'
+                  }} />
+                )}
+                {loading ? 'Analyzing...' : 'Find My Careers'}
               </button>
             ) : (
               <button
                 onClick={nextStep}
-                className="group relative px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold hover:shadow-xl hover:scale-105 transition-all duration-200 active:scale-95 overflow-hidden"
+                style={{
+                  padding: '12px 32px',
+                  border: 'none',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
+                  color: 'white',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                }}
               >
-                <span className="relative z-10">Next Step</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                Next Step
               </button>
             )}
           </div>
@@ -305,12 +474,35 @@ const CareerPathFinder = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 mb-8 shadow-lg">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+          <div style={{
+            background: '#fef2f2',
+            border: '2px solid #fca5a5',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '32px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px'
+            }}>
+              <AlertCircle style={{
+                width: '24px',
+                height: '24px',
+                color: '#dc2626',
+                flexShrink: 0,
+                marginTop: '2px'
+              }} />
               <div>
-                <h3 className="font-semibold text-red-900 mb-1">Connection Error</h3>
-                <p className="text-red-700">{error}</p>
+                <h3 style={{
+                  fontWeight: '600',
+                  color: '#7f1d1d',
+                  marginBottom: '4px'
+                }}>
+                  Connection Error
+                </h3>
+                <p style={{ color: '#b91c1c', margin: 0 }}>{error}</p>
               </div>
             </div>
           </div>
@@ -318,12 +510,20 @@ const CareerPathFinder = () => {
 
         {/* Results */}
         {matches.length > 0 && (
-          <div ref={resultsRef} className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold text-white mb-3">
+          <div ref={resultsRef} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+              <h2 style={{
+                fontSize: '36px',
+                fontWeight: '700',
+                color: 'white',
+                marginBottom: '12px'
+              }}>
                 Your Top Career Matches
               </h2>
-              <p className="text-white/70 text-lg">
+              <p style={{
+                fontSize: '18px',
+                color: 'rgba(255,255,255,0.7)'
+              }}>
                 Based on your unique profile, here are {matches.length} careers tailored for you
               </p>
             </div>
@@ -331,42 +531,113 @@ const CareerPathFinder = () => {
             {matches.map((match, idx) => (
               <div
                 key={idx}
-                className="group bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: 'white',
+                  borderRadius: '24px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                  padding: '32px',
+                  transition: 'all 0.3s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
+                }}
               >
                 {/* Header */}
-                <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
-                  <h3 className="text-3xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  flexWrap: 'wrap',
+                  gap: '16px',
+                  marginBottom: '24px'
+                }}>
+                  <h3 style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    color: '#111827',
+                    margin: 0
+                  }}>
                     {match.job_title}
                   </h3>
-                  <div className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-full font-bold shadow-lg">
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 20px',
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
+                    color: 'white',
+                    borderRadius: '999px',
+                    fontWeight: '700',
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                  }}>
                     {match.match_percentage.toFixed(1)}% Match
                   </div>
                 </div>
 
                 {/* Description */}
-                <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                <p style={{
+                  color: '#4b5563',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  marginBottom: '24px'
+                }}>
                   {match.description}
                 </p>
 
                 {/* Reasoning */}
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 mb-6 border border-blue-100">
-                  <h4 className="flex items-center gap-2 text-lg font-bold text-gray-900 mb-3">
-                    <CheckCircle className="w-5 h-5 text-blue-600" />
+                <div style={{
+                  background: 'linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  marginBottom: '24px',
+                  border: '1px solid #bfdbfe'
+                }}>
+                  <h4 style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#111827',
+                    marginBottom: '12px'
+                  }}>
+                    <CheckCircle style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
                     Why This Matches You
                   </h4>
-                  <p className="text-gray-700 leading-relaxed">
+                  <p style={{
+                    color: '#374151',
+                    lineHeight: '1.6',
+                    margin: 0
+                  }}>
                     {match.reasoning}
                   </p>
                 </div>
 
                 {/* Skills */}
                 {match.skills && (
-                  <div className="mb-6">
-                    <h4 className="flex items-center gap-2 text-base font-bold text-gray-900 mb-3">
-                      <TrendingUp className="w-5 h-5 text-cyan-600" />
+                  <div style={{ marginBottom: '24px' }}>
+                    <h4 style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '16px',
+                      fontWeight: '700',
+                      color: '#111827',
+                      marginBottom: '12px'
+                    }}>
+                      <TrendingUp style={{ width: '20px', height: '20px', color: '#06b6d4' }} />
                       Required Skills
                     </h4>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p style={{
+                      color: '#4b5563',
+                      lineHeight: '1.6',
+                      margin: 0
+                    }}>
                       {match.skills}
                     </p>
                   </div>
@@ -374,31 +645,82 @@ const CareerPathFinder = () => {
 
                 {/* Metadata Grid */}
                 {(match.salary_range || match.education || match.industry) && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t-2 border-gray-100">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                    paddingTop: '24px',
+                    borderTop: '2px solid #f3f4f6'
+                  }}>
                     {match.salary_range && (
-                      <div className="flex items-center gap-3">
-                        <DollarSign className="w-5 h-5 text-green-600" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <DollarSign style={{ width: '20px', height: '20px', color: '#10b981' }} />
                         <div>
-                          <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Salary</div>
-                          <div className="text-sm font-bold text-gray-900">{match.salary_range}</div>
+                          <div style={{
+                            fontSize: '11px',
+                            color: '#6b7280',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            marginBottom: '4px'
+                          }}>
+                            Salary
+                          </div>
+                          <div style={{
+                            fontSize: '14px',
+                            color: '#111827',
+                            fontWeight: '600'
+                          }}>
+                            {match.salary_range}
+                          </div>
                         </div>
                       </div>
                     )}
                     {match.education && (
-                      <div className="flex items-center gap-3">
-                        <Book className="w-5 h-5 text-blue-600" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Book style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
                         <div>
-                          <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Education</div>
-                          <div className="text-sm font-bold text-gray-900">{match.education}</div>
+                          <div style={{
+                            fontSize: '11px',
+                            color: '#6b7280',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            marginBottom: '4px'
+                          }}>
+                            Education
+                          </div>
+                          <div style={{
+                            fontSize: '14px',
+                            color: '#111827',
+                            fontWeight: '600'
+                          }}>
+                            {match.education}
+                          </div>
                         </div>
                       </div>
                     )}
                     {match.industry && (
-                      <div className="flex items-center gap-3">
-                        <Briefcase className="w-5 h-5 text-slate-600" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Briefcase style={{ width: '20px', height: '20px', color: '#64748b' }} />
                         <div>
-                          <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Industry</div>
-                          <div className="text-sm font-bold text-gray-900">{match.industry}</div>
+                          <div style={{
+                            fontSize: '11px',
+                            color: '#6b7280',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            marginBottom: '4px'
+                          }}>
+                            Industry
+                          </div>
+                          <div style={{
+                            fontSize: '14px',
+                            color: '#111827',
+                            fontWeight: '600'
+                          }}>
+                            {match.industry}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -411,19 +733,8 @@ const CareerPathFinder = () => {
       </div>
 
       <style>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </div>
