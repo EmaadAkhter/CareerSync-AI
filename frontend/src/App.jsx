@@ -108,14 +108,16 @@ const App = () => {
     setMatches([]);
 
     try {
-      const response = await fetch('https://careersync-ai-1.onrender.com/api/match-careers', {
+      // FIXED: Use localhost instead of 0.0.0.0
+      const response = await fetch('http://localhost:8000/api/match-careers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch career matches');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Server error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -124,9 +126,14 @@ const App = () => {
         setError(data.error);
       } else {
         setMatches(data.matches || []);
+        // Scroll to results
+        setTimeout(() => {
+          document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
       }
     } catch (err) {
-      setError('Unable to connect to the server. Make sure the backend is running on port 5001.');
+      setError(err.message || 'Unable to connect to server. Make sure backend is running on port 8000.');
+      console.error('Career matching error:', err);
     } finally {
       setLoading(false);
     }
@@ -238,7 +245,8 @@ const App = () => {
                       resize: 'vertical',
                       minHeight: '100px',
                       outline: 'none',
-                      transition: 'border-color 0.2s'
+                      transition: 'border-color 0.2s',
+                      boxSizing: 'border-box'
                     }}
                     onFocus={(e) => e.target.style.borderColor = '#667eea'}
                     onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
@@ -269,10 +277,10 @@ const App = () => {
                   transition: 'all 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  if (currentStep !== 0) e.target.style.background = '#f7fafc';
+                  if (currentStep !== 0) e.currentTarget.style.background = '#f7fafc';
                 }}
                 onMouseOut={(e) => {
-                  e.target.style.background = 'white';
+                  e.currentTarget.style.background = 'white';
                 }}
               >
                 Previous
@@ -295,10 +303,10 @@ const App = () => {
                     boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
                   }}
                   onMouseOver={(e) => {
-                    if (!loading) e.target.style.transform = 'translateY(-2px)';
+                    if (!loading) e.currentTarget.style.transform = 'translateY(-2px)';
                   }}
                   onMouseOut={(e) => {
-                    e.target.style.transform = 'translateY(0)';
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
                   {loading ? 'Finding Matches...' : 'Find My Careers'}
@@ -319,10 +327,10 @@ const App = () => {
                     boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
                   }}
                   onMouseOver={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
                   }}
                   onMouseOut={(e) => {
-                    e.target.style.transform = 'translateY(0)';
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
                   Next
@@ -340,12 +348,14 @@ const App = () => {
             padding: '16px 20px',
             marginBottom: '30px'
           }}>
-            <p style={{ color: '#c53030', margin: 0, fontSize: '15px' }}>{error}</p>
+            <p style={{ color: '#c53030', margin: 0, fontSize: '15px' }}>
+              ⚠️ {error}
+            </p>
           </div>
         )}
 
         {matches.length > 0 && (
-          <div>
+          <div id="results">
             <h2 style={{
               fontSize: '32px',
               fontWeight: 'bold',
@@ -376,7 +386,9 @@ const App = () => {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'flex-start',
-                  marginBottom: '15px'
+                  marginBottom: '15px',
+                  flexWrap: 'wrap',
+                  gap: '10px'
                 }}>
                   <h3 style={{
                     fontSize: '24px',
@@ -393,8 +405,7 @@ const App = () => {
                     borderRadius: '999px',
                     fontSize: '14px',
                     fontWeight: '600',
-                    whiteSpace: 'nowrap',
-                    marginLeft: '15px'
+                    whiteSpace: 'nowrap'
                   }}>
                     {match.match_percentage.toFixed(1)}% Match
                   </div>
@@ -434,7 +445,7 @@ const App = () => {
                 </div>
 
                 {match.skills && (
-                  <div>
+                  <div style={{ marginBottom: '15px' }}>
                     <h4 style={{
                       fontSize: '16px',
                       fontWeight: '600',
@@ -451,6 +462,48 @@ const App = () => {
                     }}>
                       {match.skills}
                     </p>
+                  </div>
+                )}
+
+                {(match.salary_range || match.education || match.industry) && (
+                  <div style={{
+                    borderTop: '1px solid #e2e8f0',
+                    paddingTop: '15px',
+                    marginTop: '15px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '15px'
+                  }}>
+                    {match.salary_range && (
+                      <div>
+                        <span style={{ fontSize: '12px', color: '#718096', display: 'block', marginBottom: '4px' }}>
+                          Salary Range
+                        </span>
+                        <span style={{ fontSize: '14px', color: '#2d3748', fontWeight: '500' }}>
+                          {match.salary_range}
+                        </span>
+                      </div>
+                    )}
+                    {match.education && (
+                      <div>
+                        <span style={{ fontSize: '12px', color: '#718096', display: 'block', marginBottom: '4px' }}>
+                          Education
+                        </span>
+                        <span style={{ fontSize: '14px', color: '#2d3748', fontWeight: '500' }}>
+                          {match.education}
+                        </span>
+                      </div>
+                    )}
+                    {match.industry && (
+                      <div>
+                        <span style={{ fontSize: '12px', color: '#718096', display: 'block', marginBottom: '4px' }}>
+                          Industry
+                        </span>
+                        <span style={{ fontSize: '14px', color: '#2d3748', fontWeight: '500' }}>
+                          {match.industry}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
