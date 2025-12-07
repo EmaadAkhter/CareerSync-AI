@@ -10,7 +10,9 @@ EMBEDDING_DIMENSION = 384
 
 _model_cache = None
 
+
 def get_model():
+    """Lazy load and cache the model"""
     global _model_cache
     if _model_cache is None:
         _model_cache = SentenceTransformer(EMBEDDING_MODEL)
@@ -20,7 +22,7 @@ def get_model():
 def vectorize_and_store(data, index_name=INDEX_NAME):
     load_dotenv()
 
-    model = get_model()
+    model = get_model()  
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
     if index_name in pc.list_indexes().names():
@@ -29,7 +31,7 @@ def vectorize_and_store(data, index_name=INDEX_NAME):
 
     pc.create_index(
         name=index_name,
-        dimension=EMBEDDING_DIMENSION,  
+        dimension=EMBEDDING_DIMENSION,
         metric="cosine",
         spec=ServerlessSpec(cloud="aws", region="us-east-1")
     )
@@ -60,29 +62,16 @@ def vectorize_and_store(data, index_name=INDEX_NAME):
 
 
 def get_pinecone_index(index_name=INDEX_NAME):
-
     load_dotenv()
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
     return pc.Index(index_name)
 
 
 def search_by_query(query, top_k=5, index=None):
-
     if index is None:
         index = get_pinecone_index()
-
-    from sentence_transformers import SentenceTransformer
-    import torch
-
-    model = SentenceTransformer(EMBEDDING_MODEL)
-
+    model = get_model()
     query_embedding = model.encode(query, convert_to_tensor=False).tolist()
-
-    del model
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-    import gc
-    gc.collect()
 
     results = index.query(
         vector=query_embedding,
