@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from embedder_utils import get_pinecone_index, search_by_query
 from contextlib import asynccontextmanager
 import gc
+import asyncio
 
 index = None
 
@@ -12,27 +13,26 @@ index = None
 async def lifespan(app: FastAPI):
     global index
 
-
     try:
         index = get_pinecone_index()
-
         stats = index.describe_index_stats()
-
+        print(f"Connected to Pinecone. Total vectors: {stats['total_vector_count']}")
     except Exception as e:
+        print(f"Error connecting to Pinecone: {e}")
         raise
 
     yield
-
 
 
 app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://career-sync-ai-ten.vercel.app",
-                   "https://career-sync-ai-ten.vercel.app",
-                   "career-sync-ai-git-main-emaadansaris-projects.vercel.app",
-                   "career-sync-njy77dgk3-emaadansaris-projects.vercel.app"],
+    allow_origins=[
+        "https://career-sync-ai-ten.vercel.app",
+        "https://career-sync-ai-git-main-emaadansaris-projects.vercel.app",
+        "https://career-sync-njy77dgk3-emaadansaris-projects.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "HEAD", "OPTIONS"],
     allow_headers=["*"],
@@ -66,7 +66,6 @@ class CareerFormData(BaseModel):
 
 
 def build_career_query(form_data: CareerFormData) -> str:
-
     core_parts = [
         f"Interests: {form_data.interests}",
         f"Skills: {form_data.skills}",
@@ -111,23 +110,24 @@ def transform_to_career_matches(results: list, form_data: CareerFormData) -> lis
 
         match = {
             "job_title": (
-                    career.get("job_title") or
-                    career.get("title") or
-                    career.get("name") or
-                    "Unknown Career"
+                career.get("job_title") or
+                career.get("title") or
+                career.get("name") or
+                "Unknown Career"
             ),
             "match_percentage": score * 100,
-            "description": career.get("description", "No description available"),
+            "description": career.get("description") or career.get("Short_description") or "No description available",
             "reasoning": reasoning,
             "skills": (
-                    career.get("required_skills") or
-                    career.get("skills") or
-                    ""
+                career.get("required_skills") or
+                career.get("skills") or
+                career.get("Skills_required") or
+                ""
             ),
-            "industry": career.get("industry", ""),
-            "salary_range": career.get("salary_range", ""),
-            "education": career.get("education", ""),
-            "work_environment": career.get("work_environment", "")
+            "industry": career.get("industry") or career.get("Industry") or "",
+            "salary_range": career.get("salary_range") or career.get("Pay_grade") or "",
+            "education": career.get("education") or "",
+            "work_environment": career.get("work_environment") or ""
         }
         matches.append(match)
 
@@ -137,17 +137,23 @@ def transform_to_career_matches(results: list, form_data: CareerFormData) -> lis
 @app.post("/api/match-careers")
 async def match_careers(form_data: CareerFormData):
     try:
-
         search_query = build_career_query(form_data)
 
-        results = search_careers(search_query, k=5)
+        try:
+            results = await asyncio.wait_for(
+                asyncio.to_thread(search_careers, search_query, 5),
+                timeout=25.0
+            )
+        except asyncio.TimeoutError:
+            raise HTTPException(status_code=504, detail="Search request timed out")
 
         matches = transform_to_career_matches(results, form_data)
-
         gc.collect()
 
         return {"matches": matches}
 
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -159,13 +165,24 @@ async def match_careers(form_data: CareerFormData):
 async def health_check():
     try:
         stats = index.describe_index_stats()
-
-        return {
-            "status": "ok",
-            "pinecone_connected": True,
-            "total_vectors": stats['total_vector_count'],
-            "model": "loaded on-demand (not in memory)"
-        }
+        
+        try:
+            import psutil
+            process = psutil.Process()
+            memory_mb = process.memory_info().rss / 1024 / 1024
+            
+            return {
+                "status": "ok",
+                "pinecone_connected": True,
+                "total_vectors": stats['total_vector_count'],
+                "memory_mb": round(memory_mb, 2)
+            }
+        except ImportError:
+            return {
+                "status": "ok",
+                "pinecone_connected": True,
+                "total_vectors": stats['total_vector_count']
+            }
     except Exception as e:
         return {
             "status": "error",
@@ -179,12 +196,11 @@ async def health_check():
 async def root():
     return {
         "name": "Career Path Finder API",
-        "version": "0.2.0",
-        "note": "Optimized for low memory usage"
+        "version": "0.3.0",
+        "status": "running"
     }
 
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
