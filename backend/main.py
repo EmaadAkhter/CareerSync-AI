@@ -34,7 +34,7 @@ app.add_middleware(
                    "career-sync-ai-git-main-emaadansaris-projects.vercel.app",
                    "career-sync-njy77dgk3-emaadansaris-projects.vercel.app"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "HEAD", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -155,6 +155,7 @@ async def match_careers(form_data: CareerFormData):
 
 
 @app.get("/health")
+@app.head("/health")
 async def health_check():
     try:
         stats = index.describe_index_stats()
@@ -174,6 +175,7 @@ async def health_check():
 
 
 @app.get("/")
+@app.head("/health")
 async def root():
     return {
         "name": "Career Path Finder API",
