@@ -8,11 +8,19 @@ INDEX_NAME = "occupations-index"
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 EMBEDDING_DIMENSION = 384
 
+_model_cache = None
+
+def get_model():
+    global _model_cache
+    if _model_cache is None:
+        _model_cache = SentenceTransformer(EMBEDDING_MODEL)
+    return _model_cache
+
 
 def vectorize_and_store(data, index_name=INDEX_NAME):
     load_dotenv()
 
-    model = SentenceTransformer(EMBEDDING_MODEL)
+    model = get_model()
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
     if index_name in pc.list_indexes().names():
@@ -21,7 +29,7 @@ def vectorize_and_store(data, index_name=INDEX_NAME):
 
     pc.create_index(
         name=index_name,
-        dimension=EMBEDDING_DIMENSION,  # 384 for MiniLM
+        dimension=EMBEDDING_DIMENSION,  
         metric="cosine",
         spec=ServerlessSpec(cloud="aws", region="us-east-1")
     )
