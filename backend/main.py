@@ -175,7 +175,7 @@ async def health_check():
 
 
 @app.get("/")
-@app.head("/)
+@app.head("/")
 async def root():
     return {
         "name": "Career Path Finder API",
