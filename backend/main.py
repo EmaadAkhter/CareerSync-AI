@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from embedder_utils import get_pinecone_index, search_by_query, get_model
+from resume_utils import ResumeExtractor
 from contextlib import asynccontextmanager
 import gc
 import asyncio
@@ -153,6 +154,50 @@ def transform_to_career_matches(results: list, form_data: CareerFormData) -> lis
         matches.append(match)
 
     return matches
+
+
+@app.post("/api/match-resume")
+async def match_resume(file: UploadFile = File(...)):
+    """Analyze a resume and suggest matching careers"""
+    try:
+        content = await file.read()
+        
+        # 1. Extract text from resume
+        try:
+            raw_text = ResumeExtractor.extract_text(content, file.filename)
+            search_query = ResumeExtractor.prepare_query(raw_text)
+            print(f"Extracted resume query: {search_query[:100]}...")
+        except ValueError as ve:
+            raise HTTPException(status_code=400, detail=str(ve))
+        
+        # 2. Perform vector search using existing AI engine
+        try:
+            results = await asyncio.wait_for(
+                asyncio.to_thread(search_careers, search_query, 6),
+                timeout=25.0
+            )
+        except asyncio.TimeoutError:
+            raise HTTPException(status_code=504, detail="Search request timed out")
+
+        # 3. Transform to matches (mocking some form data for reasoning)
+        from pydantic import BaseModel
+        class MockForm:
+            interests = "your professional experience"
+            skills = "the background provided in your resume"
+            values = "the details in your resume"
+        
+        matches = transform_to_career_matches(results, MockForm())
+        
+        # Cleanup
+        del results
+        gc.collect()
+
+        return {"matches": matches}
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/match-careers")

@@ -1,5 +1,9 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Briefcase, Sparkles, AlertCircle, CheckCircle, TrendingUp, Book, DollarSign, ChevronRight, ChevronLeft, Globe, GraduationCap } from 'lucide-react';
+import { 
+  Briefcase, Sparkles, AlertCircle, CheckCircle, TrendingUp, Book, 
+  DollarSign, ChevronRight, ChevronLeft, Globe, GraduationCap, 
+  Upload, FileText, Loader2, RefreshCw, Layers 
+} from 'lucide-react';
 
 const QUESTIONS_CONFIG = [
   {
@@ -89,13 +93,17 @@ const initialFormState = QUESTIONS_CONFIG.reduce((acc, section) => {
 }, {});
 
 const CareerPathFinder = () => {
+  const [mode, setMode] = useState('resume'); // 'form' or 'resume'
   const [formData, setFormData] = useState(initialFormState);
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
+  const [uploadFile, setUploadFile] = useState(null);
+  
   const resultsRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const currentSection = QUESTIONS_CONFIG[currentStep];
   const progress = ((currentStep + 1) / QUESTIONS_CONFIG.length) * 100;
@@ -137,6 +145,52 @@ const CareerPathFinder = () => {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        setUploadFile(file);
+        setError('');
+      } else {
+        setError('Please upload a PDF or .docx file');
+        setUploadFile(null);
+      }
+    }
+  };
+
+  const handleResumeSubmit = async () => {
+    if (!uploadFile) {
+      setError('Please select a resume file first');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setMatches([]);
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('file', uploadFile);
+
+      const response = await fetch('https://careersync-ai-guo8.onrender.com/api/match-resume', {
+        method: 'POST',
+        body: formDataToSend
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setMatches(data.matches || []);
+    } catch (err) {
+      setError(err.message || 'Unable to connect to server. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!validateCurrentStep()) return;
 
@@ -157,12 +211,7 @@ const CareerPathFinder = () => {
       }
 
       const data = await response.json();
-
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setMatches(data.matches || []);
-      }
+      setMatches(data.matches || []);
     } catch (err) {
       setError(err.message || 'Unable to connect to server. Please try again.');
     } finally {
@@ -194,141 +243,202 @@ const CareerPathFinder = () => {
           </div>
           
           <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight mb-4 inline-block">
-            <span className="text-gradient">Career Path Finder</span>
+            <span className="text-gradient">CareerSync AI</span>
             <span className="block h-2 bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500 mt-2 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)] animate-pulse" />
           </h1>
           
           <p className="text-xl text-slate-400/80 max-w-2xl mx-auto leading-relaxed mt-6">
-            Discover careers that align with your <span className="text-blue-400 font-semibold">passions</span>, 
-            <span className="text-cyan-400 font-semibold"> skills</span>, and 
-            <span className="text-indigo-400 font-semibold"> values</span> using our advanced AI-matching engine.
+            Intelligent career DNA matching. Upload your resume or solve the pathfinder form.
           </p>
-        </header>
 
-        {/* Form Container */}
-        <main className="glass-card rounded-[32px] p-8 md:p-12 mb-12 fade-up" style={{ animationDelay: '0.2s' }}>
-          {/* Step Indicator */}
-          <div className="flex flex-col gap-4 mb-12">
-            <div className="flex justify-between items-end">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Status</p>
-                <h3 className="text-xl font-bold text-white">
-                  {currentSection.section} <span className="text-slate-500 ml-2">({currentStep + 1}/{QUESTIONS_CONFIG.length})</span>
-                </h3>
-              </div>
-              <div className="text-right">
-                <p className="text-4xl font-extrabold italic text-primary-gradient">
-                  {Math.round(progress)}%
-                </p>
-              </div>
-            </div>
-            
-            <div className="h-2 w-full bg-slate-800/50 rounded-full overflow-hidden border border-white/5">
-              <div 
-                className="h-full progress-fill rounded-full shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-700 ease-in-out" 
-                style={{ width: `${progress}%` }} 
-              />
-            </div>
-          </div>
-
-          {/* Section Header */}
-          <div className="flex items-center gap-6 mb-10">
-            <div className={`p-4 rounded-2xl bg-gradient-to-br ${currentSection.color} shadow-lg shadow-black/20`}>
-              <SectionIcon className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight text-white">{currentSection.section} Analysis</h2>
-          </div>
-
-          {/* Form Fields */}
-          <div className="space-y-10">
-            {currentSection.questions.map((q) => (
-              <div key={q.key} className="group transition-all duration-300">
-                <label className="block mb-4">
-                  <span className="text-lg font-semibold text-slate-200 group-focus-within:text-blue-400 transition-colors">
-                    {q.label}
-                    {q.required && <span className="text-rose-500 ml-1.5">*</span>}
-                  </span>
-                </label>
-                
-                <div className="relative">
-                  <textarea
-                    value={formData[q.key]}
-                    onChange={(e) => handleChange(q.key, e.target.value)}
-                    className={`glass-input w-full px-6 py-5 rounded-2xl text-lg min-h-[140px] focus:outline-none placeholder-slate-600 resize-none ${
-                       validationErrors[q.key] ? 'border-rose-500/50 bg-rose-500/5' : ''
-                    }`}
-                    placeholder="Describe your thoughts in detail..."
-                  />
-                  {validationErrors[q.key] && (
-                    <div className="absolute -bottom-7 l-2 flex items-center gap-2 text-rose-400 text-sm font-medium">
-                      <AlertCircle className="w-4 h-4" />
-                      <span>{validationErrors[q.key]}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Form Actions */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-16 pt-10 border-t border-white/5">
-            <button
-              onClick={prevStep}
-              disabled={currentStep === 0}
-              className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all duration-300 border border-white/10 ${
-                currentStep === 0 
-                  ? 'opacity-20 cursor-not-allowed' 
-                  : 'hover:bg-white/5 hover:border-white/20 active:scale-95 text-slate-300 hover:text-white'
+          {/* Mode Switcher */}
+          <div className="flex bg-slate-900/50 backdrop-blur-xl p-1.5 rounded-2xl border border-white/5 w-fit mx-auto mt-10">
+            <button 
+              onClick={() => { setMode('resume'); setMatches([]); }}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                mode === 'resume' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white'
               }`}
             >
-              <ChevronLeft className="w-5 h-5" />
-              Back
+              <FileText className="w-4 h-4" />
+              Professional Mode
             </button>
-
-            {currentStep === QUESTIONS_CONFIG.length - 1 ? (
-              <button
-                onClick={handleSubmit}
-                disabled={loading}
-                className={`relative px-12 py-5 rounded-2xl font-extrabold text-white transition-all duration-300 active:scale-95 shadow-2xl flex items-center gap-3 ${
-                  loading 
-                    ? 'bg-slate-700 cursor-wait' 
-                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/40'
-                }`}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Analyzing DNA...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-6 h-6" />
-                    <span>Find My Path</span>
-                  </>
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={nextStep}
-                className="flex items-center gap-2 px-10 py-5 rounded-2xl bg-white text-slate-950 font-extrabold transition-all duration-300 hover:bg-slate-100 hover:shadow-xl hover:shadow-white/10 active:scale-95"
-              >
-                Continue
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            )}
+            <button 
+              onClick={() => { setMode('form'); setMatches([]); }}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                mode === 'form' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              Pathfinder Mode
+            </button>
           </div>
+        </header>
+
+        {/* Main Interface Container */}
+        <main className="fade-up" style={{ animationDelay: '0.2s' }}>
+          {mode === 'resume' ? (
+            /* Resume Mode Component */
+            <div className="glass-card rounded-[32px] p-8 md:p-12 mb-12 text-center border-white/5">
+              <div 
+                onClick={() => fileInputRef.current.click()}
+                onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.5)'; }}
+                onDragLeave={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'; }}
+                onDrop={(e) => { e.preventDefault(); handleFileChange({ target: { files: e.dataTransfer.files } }); }}
+                className="group relative cursor-pointer border-2 border-dashed border-white/10 rounded-3xl p-16 transition-all duration-500 hover:bg-blue-500/5 hover:border-blue-500/30"
+              >
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange}
+                  accept=".pdf,.docx"
+                />
+                
+                {uploadFile ? (
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 bg-blue-600/20 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/30">
+                      <CheckCircle className="w-10 h-10 text-blue-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">{uploadFile.name}</h3>
+                    <p className="text-slate-400 uppercase tracking-widest text-[10px] font-black">
+                      File Ready for analysis
+                    </p>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setUploadFile(null); }}
+                      className="mt-6 text-rose-400 text-xs font-bold uppercase tracking-widest hover:text-rose-300 transition-colors"
+                    >
+                      Remove File
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 bg-slate-800/50 rounded-2xl flex items-center justify-center mb-6 border border-white/5 group-hover:scale-110 transition-transform">
+                      <Upload className="w-10 h-10 text-slate-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Upload your resume</h3>
+                    <p className="text-slate-400 max-w-xs mx-auto leading-relaxed">
+                      Drag and drop your <span className="text-blue-400">PDF</span> or <span className="text-blue-400">DOCX</span> to extract your professional DNA.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-12 flex justify-center">
+                <button
+                  onClick={handleResumeSubmit}
+                  disabled={loading || !uploadFile}
+                  className={`relative px-12 py-5 rounded-2xl font-extrabold text-white transition-all duration-300 active:scale-95 shadow-2xl flex items-center gap-3 ${
+                    loading || !uploadFile
+                      ? 'bg-slate-700 opacity-50 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/40'
+                  }`}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <span>Analyzing Professional DNA...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-6 h-6" />
+                      <span>Start Matching Engine</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Pathfinder Mode Component */
+            <div className="glass-card rounded-[32px] p-8 md:p-12 mb-12 border-white/5">
+              {/* Step Indicator */}
+              <div className="flex flex-col gap-4 mb-12">
+                <div className="flex justify-between items-end">
+                  <div>
+                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">
+                      {currentSection.section} <span className="text-slate-500 ml-2">({currentStep + 1}/{QUESTIONS_CONFIG.length})</span>
+                    </h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-4xl font-extrabold italic text-primary-gradient">
+                      {Math.round(progress)}%
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="h-1.5 w-full bg-slate-800/50 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full progress-fill rounded-full shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-700" 
+                    style={{ width: `${progress}%` }} 
+                  />
+                </div>
+              </div>
+
+              {/* Form Fields */}
+              <div className="space-y-10">
+                {currentSection.questions.map((q) => (
+                  <div key={q.key} className="group">
+                    <label className="block mb-4">
+                      <span className="text-lg font-semibold text-slate-200 group-focus-within:text-blue-400 transition-colors">
+                        {q.label}
+                        {q.required && <span className="text-rose-500 ml-1.5">*</span>}
+                      </span>
+                    </label>
+                    <textarea
+                      value={formData[q.key]}
+                      onChange={(e) => handleChange(q.key, e.target.value)}
+                      className={`glass-input w-full px-6 py-5 rounded-2xl text-lg min-h-[140px] focus:outline-none placeholder-slate-700 resize-none ${
+                         validationErrors[q.key] ? 'border-rose-500/50' : ''
+                      }`}
+                      placeholder="Share your experience..."
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-between items-center mt-16 pt-10 border-t border-white/5">
+                <button
+                  onClick={prevStep}
+                  disabled={currentStep === 0}
+                  className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all duration-300 ${
+                    currentStep === 0 ? 'opacity-0' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  Previous Step
+                </button>
+
+                {currentStep === QUESTIONS_CONFIG.length - 1 ? (
+                  <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="relative px-12 py-5 rounded-2xl font-extrabold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:shadow-blue-500/40 transition-all duration-300 active:scale-95 shadow-2xl flex items-center gap-3"
+                  >
+                    {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Sparkles className="w-6 h-6" />}
+                    {loading ? 'Analyzing...' : 'Finish Profile'}
+                  </button>
+                ) : (
+                  <button
+                    onClick={nextStep}
+                    className="flex items-center gap-2 px-10 py-5 rounded-2xl bg-white text-slate-950 font-extrabold transition-all duration-300 hover:scale-[1.02] active:scale-95"
+                  >
+                    Continue
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </main>
 
         {/* Error State */}
         {error && (
-          <div className="glass-card mb-12 border-rose-500/30 bg-rose-500/5 p-8 rounded-[24px] fade-up shadow-lg">
+          <div className="glass-card mb-12 border-rose-500/30 bg-rose-500/5 p-8 rounded-[24px] shadow-lg">
             <div className="flex gap-4 items-start">
-              <div className="p-3 bg-rose-500/20 rounded-xl">
-                <AlertCircle className="w-6 h-6 text-rose-400" />
-              </div>
+              <AlertCircle className="w-6 h-6 text-rose-400 mt-1" />
               <div>
-                <h4 className="text-xl font-bold text-rose-200 mb-1">System Interruption</h4>
-                <p className="text-rose-300 opacity-80 leading-relaxed">{error}</p>
+                <h4 className="text-xl font-bold text-rose-200 mb-1">System Error</h4>
+                <p className="text-rose-300 opacity-80">{error}</p>
               </div>
             </div>
           </div>
@@ -336,128 +446,118 @@ const CareerPathFinder = () => {
 
         {/* Results Visualizer */}
         {matches.length > 0 && (
-          <section ref={resultsRef} className="space-y-12 pb-32 fade-up">
+          <section ref={resultsRef} className="space-y-12 pb-32">
             <div className="text-center mb-16 pt-8">
               <div className="inline-block px-4 py-1.5 rounded-full glass border-white/10 mb-4">
-                <span className="text-xs font-black uppercase tracking-widest text-blue-400">Match Results</span>
+                <span className="text-xs font-black uppercase tracking-widest text-blue-400">AI Vector Match Result</span>
               </div>
-              <h2 className="text-5xl font-extrabold text-white mb-6">Your Evolution Profile</h2>
-              <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">
-                Our AI has analyzed your input against {matches.length} specialized career sectors. 
-                Here are the paths where your potential shines brightest.
-              </p>
+              <h2 className="text-5xl font-extrabold text-white mb-6">Discovery Engine Results</h2>
             </div>
 
             <div className="space-y-8">
               {matches.map((match, idx) => (
-                <div 
-                  key={idx} 
-                  className="glass-card rounded-[32px] overflow-hidden group hover:border-blue-500/30 border border-white/5 transition-all duration-500"
-                >
-                  <div className="p-8 md:p-12">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
-                      <div>
-                        <h3 className="text-4xl font-black text-white group-hover:text-blue-400 transition-colors mb-4 leading-tight">
-                          {match.job_title}
-                        </h3>
-                        <div className="flex items-center gap-4">
-                          <span className="px-4 py-1.5 rounded-lg glass-input text-sm font-bold border-white/5 bg-white/5">
-                            {match.industry || 'Tech Sector'}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="relative group/score">
-                        <div className="absolute inset-0 bg-blue-500/20 blur-xl opacity-0 group-hover/score:opacity-100 transition-opacity duration-700" />
-                        <div className="relative glass-card border-white/10 px-8 py-5 rounded-[20px] text-center">
-                          <p className="text-xs font-black text-slate-500 uppercase tracking-tighter mb-1">Affinity</p>
-                          <p className="text-4xl font-black text-primary-gradient">
-                            {Math.round(match.match_percentage)}%
-                          </p>
-                        </div>
+                <div key={idx} className="glass-card rounded-[32px] group hover:border-blue-500/30 border border-white/5 transition-all duration-500 p-8 md:p-12">
+                  <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+                    <div>
+                      <h3 className="text-4xl font-black text-white group-hover:text-blue-400 transition-colors mb-4 leading-tight">
+                        {match.job_title}
+                      </h3>
+                      <div className="flex items-center gap-4">
+                        <span className="px-4 py-1.5 rounded-lg glass-input text-[11px] font-black uppercase tracking-widest border-white/5 bg-white/5">
+                          {match.industry || 'Global Sector'}
+                        </span>
                       </div>
                     </div>
+                    
+                    <div className="glass-card border-white/10 px-8 py-5 rounded-[20px] text-center min-w-[140px]">
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Affinity</p>
+                      <p className="text-4xl font-black text-primary-gradient">
+                        {Math.round(match.match_percentage)}%
+                      </p>
+                    </div>
+                  </div>
 
-                    <p className="text-xl text-slate-300/90 leading-relaxed mb-10">
-                      {match.description}
-                    </p>
+                  <p className="text-xl text-slate-300/80 leading-relaxed mb-10">
+                    {match.description}
+                  </p>
 
-                    <div className="grid md:grid-cols-2 gap-8 mb-10">
-                      {/* Why Section */}
-                      <div className="p-8 rounded-[24px] bg-slate-950/40 border border-white/5 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-500 hover:border-blue-500/20">
-                        <div className="flex items-center gap-3 mb-4 text-blue-400">
-                          <CheckCircle className="w-6 h-6" />
-                          <h4 className="text-lg font-bold">The Resonance</h4>
-                        </div>
-                        <p className="text-slate-400 leading-relaxed italic">
-                          "{match.reasoning}"
-                        </p>
+                  <div className="grid md:grid-cols-2 gap-8 mb-10 p-8 rounded-[24px] bg-slate-950/40 border border-white/5">
+                    <div>
+                      <div className="flex items-center gap-3 mb-4 text-blue-400 font-bold">
+                        <CheckCircle className="w-5 h-5" />
+                        <span>Resonance Matrix</span>
                       </div>
-
-                      {/* Skills Section */}
-                      <div className="p-8 rounded-[24px] bg-slate-950/40 border border-white/5 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-500 hover:border-cyan-500/20">
-                        <div className="flex items-center gap-3 mb-4 text-cyan-400">
-                          <TrendingUp className="w-6 h-6" />
-                          <h4 className="text-lg font-bold">DNA Markers</h4>
-                        </div>
-                        <div className="flex flex-wrap gap-2 uppercase font-black text-[10px] tracking-widest text-slate-500">
-                          {match.skills ? match.skills.split(',').map((s, i) => (
-                            <span key={i} className="px-3 py-1 bg-white/5 rounded-md border border-white/5">{s.trim()}</span>
-                          )) : 'N/A'}
-                        </div>
-                      </div>
+                      <p className="text-slate-400 leading-relaxed text-sm italic italic">
+                        "{match.reasoning}"
+                      </p>
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-white/5">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-slate-500 mb-1">
-                          <DollarSign className="w-4 h-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Potential</span>
-                        </div>
-                        <p className="text-white font-bold">{match.salary_range || 'Competitive'}</p>
+                    <div>
+                      <div className="flex items-center gap-3 mb-4 text-cyan-400 font-bold">
+                        <TrendingUp className="w-5 h-5" />
+                        <span>Core Indicators</span>
                       </div>
+                      <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        {match.skills ? match.skills.split(',').map((s, i) => (
+                          <span key={i} className="px-3 py-1 glass-input rounded-md">{s.trim()}</span>
+                        )) : 'General Proficiency'}
+                      </div>
+                    </div>
+                  </div>
 
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-slate-500 mb-1">
-                          <GraduationCap className="w-4 h-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Baseline</span>
-                        </div>
-                        <p className="text-white font-bold">{match.education || 'Self-Taught / Degree'}</p>
-                      </div>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-10 border-t border-white/5">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                        <DollarSign className="w-3 h-3" /> Potential
+                      </span>
+                      <p className="text-white font-bold">{match.salary_range || 'Competitive'}</p>
+                    </div>
 
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-slate-500 mb-1">
-                          <Globe className="w-4 h-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Global Focus</span>
-                        </div>
-                        <p className="text-white font-bold">{match.industry || 'Market Wide'}</p>
-                      </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                        <GraduationCap className="w-3 h-3" /> Baseline
+                      </span>
+                      <p className="text-white font-bold">{match.education || 'Self-Guided'}</p>
+                    </div>
 
-                      <div className="grid grid-cols-1 mt-auto">
-                        <button className="text-xs font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 ml-auto group/learn">
-                          Deep Dive Profile
-                          <ChevronRight className="w-4 h-4 transition-transform group-hover/learn:translate-x-1" />
-                        </button>
-                      </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                        <Globe className="w-3 h-3" /> Industry
+                      </span>
+                      <p className="text-white font-bold text-sm truncate">{match.industry || 'Market Wide'}</p>
+                    </div>
+
+                    <div className="flex items-end justify-end">
+                      <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-white transition-all group/btn">
+                        Deep Profile Report
+                        <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                      </button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+
+            <div className="text-center mt-20">
+              <button 
+                onClick={() => { setMatches([]); setUploadFile(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl glass hover:bg-white/5 transition-all font-bold text-slate-300"
+              >
+                <RefreshCw className="w-5 h-5" />
+                Reset Selection
+              </button>
+            </div>
           </section>
         )}
       </div>
 
-      <footer className="max-w-4xl mx-auto py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5 opacity-40">
+      <footer className="max-w-4xl mx-auto py-12 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5 opacity-40 mt-32">
         <div className="flex items-center gap-4">
           <Briefcase className="w-6 h-6" />
-          <span className="font-bold tracking-tighter">CareerSync AI v0.4.5</span>
+          <span className="font-bold tracking-tighter">CareerSync Pulse v0.5.2</span>
         </div>
-        <div className="flex gap-8 text-xs font-bold uppercase tracking-widest">
-          <a href="#" className="hover:text-blue-400">System Status</a>
-          <a href="#" className="hover:text-blue-400">Data Privacy</a>
-          <a href="#" className="hover:text-blue-400">Neural Log</a>
+        <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest">
+          <a href="#" className="hover:text-blue-400 tracking-[0.2em]">Neural Status: Ready</a>
         </div>
       </footer>
     </div>
