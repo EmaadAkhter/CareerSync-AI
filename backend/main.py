@@ -6,12 +6,7 @@ from contextlib import asynccontextmanager
 import gc
 import asyncio
 import os
-import torch
-
-# Limit torch threading for memory efficiency
-torch.set_num_threads(1)
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
+# torch threading will be set inside get_index or handlers when first needed
 
 index = None
 
@@ -20,6 +15,15 @@ def get_index():
     """Lazy load the Pinecone index"""
     global index
     if index is None:
+        import torch
+        # Limit torch threading for memory efficiency
+        try:
+            torch.set_num_threads(1)
+        except Exception:
+            pass
+        os.environ["OMP_NUM_THREADS"] = "1"
+        os.environ["MKL_NUM_THREADS"] = "1"
+        
         try:
             print("Connecting to Pinecone index...")
             index = get_pinecone_index()
@@ -169,6 +173,7 @@ async def match_careers(form_data: CareerFormData):
         # Explicitly clear intermediate variables and collect garbage
         del results
         gc.collect()
+        import torch
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
