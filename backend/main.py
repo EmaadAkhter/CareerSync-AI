@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from embedder_utils import get_pinecone_index, search_by_query
+from embedder_utils import get_pinecone_index, search_by_query, get_model
 from contextlib import asynccontextmanager
 import gc
 import asyncio
@@ -15,15 +15,6 @@ def get_index():
     """Lazy load the Pinecone index"""
     global index
     if index is None:
-        import torch
-        # Limit torch threading for memory efficiency
-        try:
-            torch.set_num_threads(1)
-        except Exception:
-            pass
-        os.environ["OMP_NUM_THREADS"] = "1"
-        os.environ["MKL_NUM_THREADS"] = "1"
-        
         try:
             print("Connecting to Pinecone index...")
             index = get_pinecone_index()
@@ -40,8 +31,17 @@ async def lifespan(app: FastAPI):
     port = os.getenv("PORT", "8000")
     print(f"Application starting on port: {port}")
     
-    # We no longer block startup with Pinecone stats check
-    # Instead, we just ensure we can reach Pinecone lazily inside request handlers
+    # Pre-load the ONNX model in the background
+    # This avoids the first-request lag
+    async def preload_model():
+        try:
+            print("Background: Starting model pre-load...")
+            get_model()
+            print("Background: Model pre-load complete.")
+        except Exception as e:
+            print(f"Background: Model pre-load failed: {e}")
+
+    asyncio.create_task(preload_model())
     yield
 
 
@@ -173,9 +173,6 @@ async def match_careers(form_data: CareerFormData):
         # Explicitly clear intermediate variables and collect garbage
         del results
         gc.collect()
-        import torch
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
 
         return {"matches": matches}
 

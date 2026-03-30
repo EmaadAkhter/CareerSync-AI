@@ -1,8 +1,6 @@
 import os
 from dotenv import load_dotenv
-# Move heavy imports inside functions to prevent startup timeout
-# from sentence_transformers import SentenceTransformer
-# import torch
+from onnx_utils import ONNXMiniLMEmbedder
 from pinecone import Pinecone, ServerlessSpec
 import time
 
@@ -14,17 +12,12 @@ _model_cache = None
 
 
 def get_model():
-    """Lazy load and cache the model"""
+    """Lazy load and cache the ONNX model"""
     global _model_cache
     if _model_cache is None:
-        print("Loading SentenceTransformer model (this may take a few seconds)...")
-        from sentence_transformers import SentenceTransformer
-        _model_cache = SentenceTransformer(EMBEDDING_MODEL, device='cpu')
-        # Ensure model is in eval mode and doesn't track gradients
-        _model_cache.eval()
-        for param in _model_cache.parameters():
-            param.requires_grad = False
-        print("Model loaded successfully.")
+        print("Initializing ONNX embedder (this is lightweight and fast)...")
+        _model_cache = ONNXMiniLMEmbedder(EMBEDDING_MODEL)
+        print("ONNX Embedder initialized.")
     return _model_cache
 
 
@@ -80,9 +73,10 @@ def search_by_query(query, top_k=5, index=None):
     if index is None:
         index = get_pinecone_index()
     model = get_model()
-    import torch
-    with torch.no_grad():
-        query_embedding = model.encode(query, convert_to_tensor=False, show_progress_bar=False).tolist()
+    # ONNX runtime is naturally non-gradient-tracking and CPU optimized
+    query_embedding = model.encode(query).tolist()
+    if isinstance(query_embedding[0], list):
+        query_embedding = query_embedding[0]
 
     results = index.query(
         vector=query_embedding,
