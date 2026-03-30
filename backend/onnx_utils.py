@@ -9,11 +9,10 @@ class ONNXMiniLMEmbedder:
         self.model_id = model_id
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
         
-        # Download the ONNX quantized model (very lightweight)
-        # In a real environment, we would ensure this is downloaded
+        # Download the ONNX model (canonical filename)
         model_path = hf_hub_download(
             repo_id=model_id, 
-            filename="onnx/model_quantized.onnx"
+            filename="onnx/model.onnx"
         )
         
         # Initialize ONNX runtime session with CPU execution provider
