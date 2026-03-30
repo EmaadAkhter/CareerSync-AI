@@ -6,7 +6,7 @@
 
 :root {
   --bg: #09090b;
-  --bg-card: rgba(24, 24, 27, 0.6);
+  --bg-card: rgba(24, 24, 27, 0.9);
   --primary: #6366f1;
   --primary-glow: rgba(99, 102, 241, 0.4);
   --secondary: #10b981;
@@ -23,119 +23,175 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--bg);
   color: #fafafa;
-  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  height: 100vh;
 }
 
-/* Premium Obsidian Background */
-.bg-obsidian {
+/* STABLE CSS COMPONENTS - Bypassing Tailwind Build Issues */
+
+/* Background */
+.obsidian-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 70%),
-              radial-gradient(circle at 0% 100%, #09090b 0%, transparent 50%),
-              #050507;
+  background: radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 70%), 
+              linear-gradient(180deg, #09090b 0%, #050507 100%);
 }
 
-.bg-obsidian::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity: 0.1;
-  pointer-events: none;
-  mix-blend-mode: overlay;
+/* Global Layout Header Spacing */
+.layout-header {
+  padding-top: 5rem;
+  margin-bottom: 5rem;
+  text-align: center;
 }
 
-/* Stable Glass Components */
-.glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-}
-
-.discovery-card {
-  position: relative;
+/* Stable Card Component */
+.obsidian-card {
   background: #18181b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-  cursor: grab;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 32px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+  padding: 3rem;
+  margin-bottom: 3rem;
 }
 
-.discovery-card:active {
-  cursor: grabbing;
+/* Discovery Card (The Swiper Card) */
+.discovery-card-stable {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 3.5 / 4.5;
+  background: #1c1c1f;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Vivid Buttons */
-.btn-vivid {
+/* Mode Switcher Pill */
+.mode-pill-stable {
+  display: inline-flex;
+  background: rgba(24, 24, 27, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: 18px;
+  gap: 4px;
+  margin-bottom: 2rem;
+}
+
+.mode-btn-stable {
+  padding: 10px 24px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #71717a;
+  background: transparent;
+}
+
+.mode-btn-stable.active {
   background: var(--primary);
   color: white;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px var(--primary-glow);
-  border: none;
+  box-shadow: 0 4px 15px var(--primary-glow);
 }
 
-.btn-vivid:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px var(--primary-glow);
+/* Action Buttons */
+.pulse-btn {
+  background: var(--primary);
+  color: white;
+  padding: 18px 40px;
+  border-radius: 20px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 25px var(--primary-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pulse-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 35px var(--primary-glow);
   filter: brightness(1.1);
 }
 
-.btn-vivid:active {
-  transform: translateY(0);
+.pulse-btn.secondary {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px 30px;
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
 }
 
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: #e4e4e7;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.03);
+  color: #52525b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 12px 24px;
   border-radius: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
+/* Resonance Score Box */
+.score-box {
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 24px 32px;
+  border-radius: 24px;
+  text-align: center;
+  min-width: 140px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Animations */
-@keyframes swipeRight {
-  to { transform: translate(150%, 0) rotate(20deg); opacity: 0; }
-}
-
-@keyframes swipeLeft {
-  to { transform: translate(-150%, 0) rotate(-20deg); opacity: 0; }
-}
-
-.swipe-right { animation: swipeRight 0.5s forwards; }
-.swipe-left { animation: swipeLeft 0.5s forwards; }
-
-.fade-in { animation: fadeIn 0.6s ease-out; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Typography */
-.text-vivid {
-  color: var(--primary);
-  text-shadow: 0 0 20px var(--primary-glow);
-}
-
-.text-subtle {
-  color: #71717a;
-}
-
-.title-gradient {
+/* Typography Gradient */
+.title-pulse {
   background: linear-gradient(to b, #fff 40%, #71717a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+/* Swipe Logic */
+.swipe-right-anim { animation: swipeRight 0.5s forwards; }
+.swipe-left-anim { animation: swipeLeft 0.5s forwards; }
+
+@keyframes swipeRight { to { transform: translate(150%, 0) rotate(20deg); opacity: 0; } }
+@keyframes swipeLeft { to { transform: translate(-150%, 0) rotate(-20deg); opacity: 0; } }
+
+/* Form Fields */
+.textframe {
+  width: 100%;
+  background: #09090b;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 24px;
+  color: white;
+  font-size: 1.1rem;
+  min-height: 160px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.textframe:focus {
+  border-color: var(--primary);
 }

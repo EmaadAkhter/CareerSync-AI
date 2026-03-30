@@ -50,12 +50,7 @@ const QUESTIONS_CONFIG = [
   }
 ];
 
-const initialFormState = QUESTIONS_CONFIG.reduce((acc, section) => {
-  section.questions.forEach(q => { acc[q.key] = ''; });
-  return acc;
-}, {});
-
-const DiscoverySwiper = ({ onDiscoveryComplete, loading }) => {
+const DiscoverySwiper = ({ onDiscoveryComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [positiveTraits, setPositiveTraits] = useState([]);
   const [swipeDir, setSwipeDir] = useState(null);
@@ -74,57 +69,43 @@ const DiscoverySwiper = ({ onDiscoveryComplete, loading }) => {
         setCurrentIndex(prev => prev + 1);
         setSwipeDir(null);
       } else {
-        // End of deck
         onDiscoveryComplete([...positiveTraits, isPositive ? currentCard.query : null].filter(Boolean));
       }
-    }, 300);
+    }, 400);
   };
 
   return (
-    <div className="max-w-md mx-auto relative h-[480px] flex flex-col justify-between fade-in">
-      <div className="text-center mb-8">
-        <p className="text-xs uppercase tracking-widest text-[#71717a] font-bold mb-2">
+    <div className="discovery-container" style={{ maxWidth: '400px', margin: '0 auto', textAlign: 'center' }}>
+      <div style={{ marginBottom: '2.5rem' }}>
+        <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#52525b', fontWeight: 900, marginBottom: '0.5rem' }}>
           Discovery engine: Card {currentIndex + 1} / {DISCOVERY_CARDS.length}
         </p>
-        <h3 className="text-xl font-bold">Swipe to find your resonance</h3>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Swipe to find your resonance</h3>
       </div>
 
-      <div className="relative flex-grow flex items-center justify-center">
-        {currentIndex < DISCOVERY_CARDS.length ? (
-          <div className={`discovery-card glass-panel w-full aspect-[3/4] p-8 flex flex-col items-center justify-center text-center select-none ${
-            swipeDir === 'right' ? 'swipe-right' : swipeDir === 'left' ? 'swipe-left' : ''
-          }`}>
-            <div className="w-16 h-16 bg-indigo-600/20 rounded-full flex items-center justify-center mb-10 shadow-[0_0_30px_rgba(99,102,241,0.3)]">
-              <Zap className="w-8 h-8 text-indigo-400 group-hover:scale-110 transition-transform" />
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3.5rem' }}>
+        {currentIndex < DISCOVERY_CARDS.length && (
+          <div className={`discovery-card-stable ${swipeDir === 'right' ? 'swipe-right-anim' : swipeDir === 'left' ? 'swipe-left-anim' : ''}`}>
+            <div style={{ width: '4rem', height: '4rem', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyCenter: 'center', marginBottom: '2.5rem', margin: '0 auto 2.5rem' }}>
+              <Zap style={{ width: '2rem', height: '2rem', color: '#818cf8', margin: 'auto' }} />
             </div>
-            <p className="text-2xl font-black leading-tight">
+            <p style={{ fontSize: '1.75rem', fontWeight: 900, lineHeight: 1.2 }}>
               {currentCard.trait}
             </p>
-            <div className="absolute bottom-10 flex gap-4 text-xs font-bold text-slate-500 uppercase tracking-widest items-center">
-               <MousePointer2 className="w-3 h-3" />
-               Tap or use buttons
+            <div style={{ marginTop: 'auto', paddingTop: '2.5rem', fontSize: '9px', fontWeight: 900, color: '#3f3f46', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+               <MousePointer2 style={{ width: '0.75rem', height: '0.75rem' }} />
+               Use buttons below
             </div>
-          </div>
-        ) : (
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mx-auto mb-4" />
-            <p className="font-bold">DNA Analysis in progress...</p>
           </div>
         )}
       </div>
 
-      <div className="flex justify-center gap-8 mt-12">
-        <button 
-          onClick={() => handleSwipe(false)}
-          className="w-20 h-20 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition-all hover:scale-110 active:scale-95 shadow-xl"
-        >
-          <X className="w-8 h-8" />
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '2.5rem' }}>
+        <button onClick={() => handleSwipe(false)} className="secondary-btn" style={{ width: '4.5rem', height: '4.5rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f43f5e' }}>
+          <X style={{ width: '2rem', height: '2rem' }} />
         </button>
-        <button 
-          onClick={() => handleSwipe(true)}
-          className="w-20 h-20 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center text-emerald-500 hover:bg-emerald-500/10 transition-all hover:scale-110 active:scale-95 shadow-xl shadow-emerald-500/10"
-        >
-          <Heart className="w-8 h-8" />
+        <button onClick={() => handleSwipe(true)} className="secondary-btn" style={{ width: '4.5rem', height: '4.5rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', background: 'rgba(16, 185, 129, 0.05)' }}>
+          <Heart style={{ width: '2rem', height: '2rem' }} />
         </button>
       </div>
     </div>
@@ -135,101 +116,81 @@ const ResultsList = ({ matches, onReset }) => {
   const resultsRef = useRef(null);
 
   useEffect(() => {
-    if (resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    if (resultsRef.current) resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
   return (
-    <section ref={resultsRef} className="space-y-12 pb-32 fade-in">
-      <div className="text-center mb-16 pt-12">
-        <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-900/40 border border-indigo-500/30 mb-4 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-          <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Match Profile Generated</span>
+    <section ref={resultsRef} style={{ paddingBottom: '8rem' }}>
+      <div className="layout-header">
+        <div style={{ display: 'inline-block', padding: '0.4rem 1rem', borderRadius: '99px', background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', marginBottom: '1.5rem' }}>
+          <span style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#818cf8' }}>Match Generated</span>
         </div>
-        <h2 className="text-5xl font-black tracking-tighter text-white mb-6">Discovery Pulse Results</h2>
-        <p className="text-[#a1a1aa] leading-relaxed max-w-2xl mx-auto">
-          We analyzed your trait resonance across {matches.length} specialized career markers. 
-          Here are your high-frequency paths.
+        <h2 style={{ fontSize: '3.5rem', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '1.5rem' }}>Discovery Pulse Results</h2>
+        <p style={{ fontSize: '1.1rem', color: '#71717a', maxWidth: '40rem', margin: '0 auto' }}>
+          Our vector engine analyzed your traits across specialized career sectors. 
+          Here are your resonance markers.
         </p>
       </div>
 
-      <div className="grid gap-8">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {matches.map((match, idx) => (
-          <div key={idx} className="glass-panel rounded-[32px] overflow-hidden group hover:border-indigo-500/40 transition-all duration-500 p-8 md:p-12">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
-              <div className="flex-grow">
-                <h3 className="text-4xl font-extrabold text-white mb-4 leading-tight group-hover:text-indigo-400 transition-colors">
+          <div key={idx} className="obsidian-card">
+            <div style={{ display: 'flex', flexDirection: 'column', md: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', marginBottom: '2.5rem' }}>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
                   {match.job_title}
                 </h3>
-                <div className="flex flex-wrap gap-3">
-                  <span className="px-4 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-[#71717a]">
-                    {match.industry || 'Market Wide'}
-                  </span>
-                </div>
+                <span style={{ fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#52525b' }}>
+                  {match.industry || 'Market Wide'}
+                </span>
               </div>
               
-              <div className="bg-black/40 border border-white/5 px-8 pt-6 pb-5 rounded-[24px] text-center min-w-[150px] shadow-2xl">
-                <p className="text-[10px] font-black text-[#52525b] uppercase tracking-widest mb-1">Affinity Rank</p>
-                <p className="text-5xl font-black text-indigo-500 italic">
+              <div className="score-box">
+                <p style={{ fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', color: '#52525b', letterSpacing: '0.1em', marginBottom: '0.2rem' }}>Affinity</p>
+                <p style={{ fontSize: '3rem', fontWeight: 900, color: '#6366f1', fontStyle: 'italic' }}>
                   {Math.round(match.match_percentage)}%
                 </p>
               </div>
             </div>
 
-            <p className="text-xl text-[#d4d4d8] leading-relaxed mb-10 opacity-80 group-hover:opacity-100 transition-opacity">
+            <p style={{ fontSize: '1.25rem', color: '#a1a1aa', lineHeight: 1.5, marginBottom: '2.5rem' }}>
               {match.description}
             </p>
 
-            <div className="grid md:grid-cols-2 gap-8 mb-10 p-8 rounded-[28px] bg-black/40 border border-white/5">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 text-indigo-400 font-bold text-sm uppercase tracking-wider">
-                  <Heart className="w-5 h-5" />
-                  <span>The Resonance</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2.5rem', padding: '2rem', background: '#09090b', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.03)' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#818cf8', fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '1rem' }}>
+                  <Heart style={{ width: '1rem', height: '1rem' }} /> Resonance
                 </div>
-                <p className="text-sm leading-relaxed text-[#71717a] italic italic">
+                <p style={{ fontSize: '0.9rem', color: '#71717a', fontStyle: 'italic', lineHeight: 1.6 }}>
                   "{match.reasoning}"
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 text-emerald-400 font-bold text-sm uppercase tracking-wider">
-                  <Search className="w-5 h-5" />
-                  <span>Core Markers</span>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '1rem' }}>
+                  <Search style={{ width: '1rem', height: '1rem' }} /> Indicators
                 </div>
-                <div className="flex flex-wrap gap-2 text-[9px] font-black uppercase tracking-widest text-[#52525b]">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {match.skills ? match.skills.split(',').map((s, i) => (
-                    <span key={i} className="px-3 py-1.5 bg-white/5 border border-white/5 rounded-lg">{s.trim()}</span>
-                  )) : 'General Professionalism'}
+                    <span key={i} style={{ fontSize: '8px', fontWeight: 900, textTransform: 'uppercase', padding: '0.4rem 0.6rem', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.03)', borderRadius: '6px', color: '#3f3f46' }}>{s.trim()}</span>
+                  )) : 'General'}
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 pt-10 border-t border-white/5">
-              <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#52525b] flex items-center gap-2">
-                  <DollarSign className="w-3 h-3" /> Potential
-                </p>
-                <p className="text-white font-bold">{match.salary_range || 'Competitive'}</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '2.5rem', paddingTop: '2rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#52525b] mb-1">Potential</p>
+                <p style={{ color: 'white', fontWeight: 800 }}>{match.salary_range || 'Competitive'}</p>
               </div>
-
-              <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#52525b] flex items-center gap-2">
-                  <GraduationCap className="w-3 h-3" /> Baseline
-                </p>
-                <p className="text-white font-bold">{match.education || 'Self-Guided'}</p>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#52525b] mb-1">Baseline</p>
+                <p style={{ color: 'white', fontWeight: 800 }}>{match.education || 'Self-Guided'}</p>
               </div>
-
-              <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#52525b] flex items-center gap-2">
-                   <Globe className="w-3 h-3" /> Market
-                </p>
-                <p className="text-white font-bold text-sm truncate">{match.industry || 'General'}</p>
-              </div>
-
-              <div className="flex justify-end items-center">
-                <button className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-white transition-all flex items-center gap-2 group/btn">
-                  Full Dossier
-                  <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                <button style={{ background: 'none', border: 'none', color: '#6366f1', fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  Open Dossier <ChevronRight style={{ width: '0.8rem', height: '0.8rem' }} />
                 </button>
               </div>
             </div>
@@ -237,13 +198,9 @@ const ResultsList = ({ matches, onReset }) => {
         ))}
       </div>
 
-      <div className="flex justify-center pt-20">
-        <button 
-          onClick={onReset}
-          className="btn-secondary flex items-center gap-3 px-10 py-5"
-        >
-          <RefreshCw className="w-5 h-5" />
-          Reset Neural Pulse
+      <div style={{ textAlign: 'center', marginTop: '5rem' }}>
+        <button onClick={onReset} className="pulse-btn secondary">
+          <RefreshCw style={{ width: '1.25rem', height: '1.25rem' }} /> Reset Analysis
         </button>
       </div>
     </section>
@@ -251,74 +208,46 @@ const ResultsList = ({ matches, onReset }) => {
 };
 
 const PathfinderForm = ({ loading, onSubmit }) => {
-  const [formData, setFormData] = useState(initialFormState);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({ interests: '', skills: '', values: '' });
+  const [step, setStep] = useState(0);
 
-  const section = QUESTIONS_CONFIG[currentStep];
-  const progress = ((currentStep + 1) / QUESTIONS_CONFIG.length) * 100;
+  const sections = [
+    { key: 'interests', label: 'What fuels your curiosity?' },
+    { key: 'skills', label: 'What is your natural expertise?' },
+    { key: 'values', label: 'What do you aim to achieve?' }
+  ];
 
   const handleNext = () => {
-    let newErrors = {};
-    section.questions.forEach(q => {
-      if (q.required && !formData[q.key]) newErrors[q.key] = true;
-    });
-    
-    if (Object.keys(newErrors).length === 0) {
-      if (currentStep < QUESTIONS_CONFIG.length - 1) {
-        setCurrentStep(prev => prev + 1);
-      } else {
-        onSubmit(formData);
-      }
-    } else {
-      setErrors(newErrors);
-    }
+    if (step < 2) setStep(prev => prev + 1);
+    else onSubmit(formData);
   };
 
   return (
-    <div className="glass-panel rounded-[32px] p-8 md:p-12 mb-12 fade-in">
-      <div className="mb-10">
-        <div className="flex justify-between items-end mb-4">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-[#52525b]">Step {currentStep + 1} of 3</p>
-          <p className="text-4xl font-black italic title-gradient">{Math.round(progress)}%</p>
+    <div className="obsidian-card">
+      <div style={{ marginBottom: '3rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1rem' }}>
+          <p style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', color: '#52525b' }}>Pulse {step + 1} / 3</p>
+          <p style={{ fontSize: '2.5rem', fontWeight: 900, fontStyle: 'italic', opacity: 0.5 }}>{Math.round(((step+1)/3)*100)}%</p>
         </div>
-        <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-          <div className="h-full bg-indigo-600 transition-all duration-700" style={{ width: `${progress}%` }} />
+        <div style={{ height: '2px', background: '#09090b', borderRadius: '1rem', overflow: 'hidden' }}>
+          <div style={{ height: '100%', background: '#6366f1', width: `${((step+1)/3)*100}%` }} />
         </div>
       </div>
 
-      <div className="space-y-12">
-        {section.questions.map((q) => (
-          <div key={q.key} className="space-y-4">
-            <label className="block text-xl font-bold text-[#e4e4e7]">
-              {q.label}
-              {q.required && <span className="text-indigo-500 ml-2">*</span>}
-            </label>
-            <textarea
-              value={formData[q.key]}
-              onChange={(e) => {
-                setFormData(prev => ({ ...prev, [q.key]: e.target.value }));
-                setErrors(prev => ({ ...prev, [q.key]: false }));
-              }}
-              className={`w-full bg-[#09090b]/50 border-2 rounded-2xl p-6 text-lg min-h-[160px] focus:outline-none transition-all ${
-                errors[q.key] ? 'border-indigo-500/30' : 'border-white/5 focus:border-indigo-500/50'
-              }`}
-              placeholder="Detailed input for high-fidelity matching..."
-            />
-          </div>
-        ))}
+      <div style={{ marginBottom: '4rem' }}>
+        <label style={{ display: 'block', fontSize: '1.5rem', fontWeight: 900, marginBottom: '1.5rem', color: '#e4e4e7' }}>{sections[step].label}</label>
+        <textarea
+          value={formData[sections[step].key]}
+          onChange={(e) => setFormData(prev => ({ ...prev, [sections[step].key]: e.target.value }))}
+          className="textframe"
+          placeholder="Detailed input for neural matching..."
+        />
       </div>
 
-      <div className="flex justify-between items-center mt-20 pt-10 border-t border-white/5">
-        <button 
-          onClick={() => currentStep > 0 && setCurrentStep(prev => prev - 1)}
-          className={`flex items-center gap-2 font-bold text-slate-500 ${currentStep === 0 ? 'opacity-0 pointer-events-none' : 'hover:text-white'}`}
-        >
-          <ChevronLeft className="w-5 h-5" /> Back
-        </button>
-        <button onClick={handleNext} disabled={loading} className="btn-vivid flex items-center gap-2 px-12">
-          {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : currentStep === QUESTIONS_CONFIG.length - 1 ? 'Analyze Path' : 'Continue'}
-          {!loading && <ChevronRight className="w-5 h-5" />}
+      <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '2.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+        <button onClick={() => step > 0 && setStep(s => s - 1)} className="secondary-btn" style={{ opacity: step === 0 ? 0 : 1 }}>Back</button>
+        <button onClick={handleNext} className="pulse-btn">
+          {step === 2 ? 'Initialize Match' : 'Continue Path'}
         </button>
       </div>
     </div>
@@ -326,127 +255,81 @@ const PathfinderForm = ({ loading, onSubmit }) => {
 };
 
 const App = () => {
-  const [mode, setMode] = useState('discovery'); // 'discovery' or 'form'
+  const [mode, setMode] = useState('discovery');
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleDiscovery = async (traits) => {
     setLoading(true);
-    setError('');
-    
     try {
       const response = await fetch('https://careersync-ai-guo8.onrender.com/api/match-careers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          interests: traits.join(', '),
-          skills: 'profiled via trait resonance',
-          values: 'discovery engine matches'
-        })
+        body: JSON.stringify({ interests: traits.join(', '), skills: 'Discovery Profile', values: 'Vector Harmony' })
       });
-
-      if (!response.ok) throw new Error(`Engine error: ${response.status}`);
       const data = await response.json();
       setMatches(data.matches || []);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFormSubmit = async (formData) => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      const response = await fetch('https://careersync-ai-guo8.onrender.com/api/match-careers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) throw new Error(`Engine error: ${response.status}`);
-      const data = await response.json();
-      setMatches(data.matches || []);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (e) { console.error(e); }
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen pt-16 pb-32 px-6">
-      <div className="bg-obsidian" />
+    <div style={{ minHeight: '100vh', padding: '0 1.5rem' }}>
+      <div className="obsidian-bg" />
 
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <header className="text-center mb-20 fade-in">
-          <div className="inline-flex items-center justify-center p-6 rounded-[32px] glass-panel mb-10 relative group">
-            <div className="absolute inset-0 bg-indigo-500/20 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity" />
-            <Briefcase className="w-10 h-10 text-indigo-400 relative z-10" />
+      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <header className="layout-header">
+          <div style={{ display: 'inline-flex', padding: '1.5rem', borderRadius: '2.5rem', background: 'rgba(24, 24, 27, 0.8)', border: '1px solid rgba(255, 255, 255, 0.05)', marginBottom: '2.5rem' }}>
+            <Briefcase style={{ width: '2.5rem', height: '2.5rem', color: '#6366f1' }} />
           </div>
           
-          <h1 className="text-7xl font-black tracking-tighter mb-6 title-gradient leading-tight">
-            CareerSync AI
-          </h1>
-          
-          <p className="text-xl text-[#71717a] max-w-2xl mx-auto leading-relaxed">
-            Stop searching. Start <span className="text-white italic">resonating</span>. 
-            Choose your discovery method below.
+          <h1 className="title-pulse" style={{ marginBottom: '1.5rem' }}>CareerSync AI</h1>
+          <p style={{ fontSize: '1.1rem', color: '#52525b', maxWidth: '35rem', margin: '0 auto 3.5rem', lineHeight: 1.6 }}>
+            Navigate your professional resonance through vector-driven discovery.
           </p>
 
           {!matches.length && (
-            <div className="flex bg-[#18181b] border border-white/5 p-1 rounded-2xl w-fit mx-auto mt-12 shadow-2xl">
+            <div className="mode-pill-stable">
               <button 
                 onClick={() => setMode('discovery')}
-                className={`flex items-center gap-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                  mode === 'discovery' ? 'bg-indigo-600 text-white shadow-[0_0_20px_var(--primary-glow)]' : 'text-[#52525b] hover:text-white'
-                }`}
+                className={`mode-btn-stable ${mode === 'discovery' ? 'active' : ''}`}
               >
-                <Zap className="w-4 h-4" /> Discovery Mode
+                Discovery
               </button>
               <button 
                 onClick={() => setMode('form')}
-                className={`flex items-center gap-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                  mode === 'form' ? 'bg-indigo-600 text-white shadow-[0_0_20px_var(--primary-glow)]' : 'text-[#52525b] hover:text-white'
-                }`}
+                className={`mode-btn-stable ${mode === 'form' ? 'active' : ''}`}
               >
-                <Layers className="w-4 h-4" /> Deep Pathfinder
+                Pathfinder
               </button>
             </div>
           )}
         </header>
 
         <main>
-          {error && (
-            <div className="glass-panel border-rose-500/30 p-8 rounded-3xl mb-12 flex gap-4 items-center fade-in">
-              <AlertCircle className="w-6 h-6 text-rose-500" />
-              <p className="text-rose-200 font-bold tracking-tight">{error}</p>
-            </div>
-          )}
-
-          {matches.length > 0 ? (
+          {loading ? (
+             <div style={{ textAlign: 'center', padding: '5rem' }}>
+               <RefreshCw style={{ width: '3rem', height: '3rem', color: '#6366f1', animation: 'spin 1s linear infinite' }} />
+               <p style={{ marginTop: '1.5rem', fontWeight: 800 }}>Neural Processing...</p>
+             </div>
+          ) : matches.length > 0 ? (
             <ResultsList matches={matches} onReset={() => setMatches([])} />
           ) : mode === 'discovery' ? (
-            <DiscoverySwiper onDiscoveryComplete={handleDiscovery} loading={loading} />
+            <DiscoverySwiper onDiscoveryComplete={handleDiscovery} />
           ) : (
-            <PathfinderForm onDiscoveryComplete={handleFormSubmit} loading={loading} />
+            <PathfinderForm onSubmit={handleDiscovery} loading={loading} />
           )}
         </main>
 
-        <footer className="mt-40 pt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-12 text-[#3f3f46]">
-          <div className="flex items-center gap-3">
-            <span className="font-black tracking-tighter text-lg uppercase text-[#27272a]">Pulse System v0.6</span>
-          </div>
-          <div className="flex gap-10 text-[9px] font-black uppercase tracking-[0.3em]">
-             <span className="text-emerald-500/60">Neural Engine: Nominal</span>
-             <span className="text-indigo-500/60">Vector Match: Active</span>
-          </div>
+        <footer style={{ marginTop: '10rem', padding: '4rem 0', borderTop: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', justifyContent: 'space-between', color: '#27272a' }}>
+          <span style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2rem' }}>Pulse Network v0.7.2</span>
+          <span style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1rem', color: 'rgba(99, 102, 241, 0.4)' }}>Status: Harmonic</span>
         </footer>
       </div>
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 };
