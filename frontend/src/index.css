@@ -5,12 +5,12 @@
 @tailwind utilities;
 
 :root {
-  --primary: #3b82f6;
-  --secondary: #06b6d4;
-  --accent: #6366f1;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --bg: #09090b;
+  --bg-card: rgba(24, 24, 27, 0.6);
+  --primary: #6366f1;
+  --primary-glow: rgba(99, 102, 241, 0.4);
+  --secondary: #10b981;
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -21,143 +21,121 @@
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg);
+  color: #fafafa;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #0f172a;
-  color: #f8fafc;
   overflow-x: hidden;
 }
 
-/* Modern Liquid Glass Background */
-.bg-mesh {
+/* Premium Obsidian Background */
+.bg-obsidian {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: -1;
-  background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, transparent 50%),
-              radial-gradient(circle at 100% 0%, #1e3a8a 0%, transparent 50%),
-              radial-gradient(circle at 100% 100%, #172554 0%, transparent 50%),
-              radial-gradient(circle at 0% 100%, #1e1b4b 0%, transparent 50%),
-              #020617;
+  background: radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 70%),
+              radial-gradient(circle at 0% 100%, #09090b 0%, transparent 50%),
+              #050507;
 }
 
-.bg-mesh::after {
+.bg-obsidian::after {
   content: "";
   position: absolute;
   inset: 0;
   background: url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity: 0.15;
+  opacity: 0.1;
   pointer-events: none;
-  filter: contrast(150%) brightness(100%);
+  mix-blend-mode: overlay;
 }
 
-.glass-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  z-index: -1;
-  animation: float 20s infinite alternate;
+/* Stable Glass Components */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
 }
 
-@keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(100px, 100px) scale(1.2); }
-}
-
-/* Glassmorphism Classes */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+.discovery-card {
+  position: relative;
+  background: #18181b;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 24px;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+  cursor: grab;
 }
 
-.glass-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-5px);
+.discovery-card:active {
+  cursor: grabbing;
 }
 
-.glass-input {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Vivid Buttons */
+.btn-vivid {
+  background: var(--primary);
   color: white;
-  transition: all 0.3s ease;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px var(--primary-glow);
+  border: none;
 }
 
-.glass-input:focus {
+.btn-vivid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--primary-glow);
+  filter: brightness(1.1);
+}
+
+.btn-vivid:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
   background: rgba(255, 255, 255, 0.05);
-  border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+  color: #e4e4e7;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-/* Text Gradients */
-.text-gradient {
-  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-primary-gradient {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Progress Bar Liquid Effect */
-.progress-fill {
-  background: linear-gradient(90deg, #3b82f6, #06b6d4, #6366f1);
-  background-size: 200% 100%;
-  animation: liquid 3s linear infinite;
-}
-
-@keyframes liquid {
-  0% { background-position: 100% 0; }
-  100% { background-position: 0% 0; }
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #020617;
-}
-
-::-webkit-scrollbar-thumb {
+.btn-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Animations */
-.fade-up {
-  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+@keyframes swipeRight {
+  to { transform: translate(150%, 0) rotate(20deg); opacity: 0; }
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes swipeLeft {
+  to { transform: translate(-150%, 0) rotate(-20deg); opacity: 0; }
+}
+
+.swipe-right { animation: swipeRight 0.5s forwards; }
+.swipe-left { animation: swipeLeft 0.5s forwards; }
+
+.fade-in { animation: fadeIn 0.6s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typography */
+.text-vivid {
+  color: var(--primary);
+  text-shadow: 0 0 20px var(--primary-glow);
+}
+
+.text-subtle {
+  color: #71717a;
+}
+
+.title-gradient {
+  background: linear-gradient(to b, #fff 40%, #71717a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
