@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Briefcase, Sparkles, AlertCircle, CheckCircle, TrendingUp, Book, DollarSign } from 'lucide-react';
+import { Briefcase, Sparkles, AlertCircle, CheckCircle, TrendingUp, Book, DollarSign, ChevronRight, ChevronLeft, Globe, GraduationCap } from 'lucide-react';
 
 const QUESTIONS_CONFIG = [
   {
     section: 'Interests',
     icon: Sparkles,
-    color: '#3b82f6',
+    color: 'from-blue-500 to-cyan-500',
     questions: [
       { key: 'interests', label: 'What topics or activities genuinely interest you?', required: true },
       { key: 'interests_fulltime', label: 'Could you see yourself working full-time in this area?' },
@@ -15,7 +15,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Skills',
     icon: TrendingUp,
-    color: '#10b981',
+    color: 'from-emerald-500 to-teal-500',
     questions: [
       { key: 'skills', label: 'What are you naturally good at?', required: true },
       { key: 'skills_natural', label: 'What skills come most naturally to you?' },
@@ -25,7 +25,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Problem Solving',
     icon: CheckCircle,
-    color: '#475569',
+    color: 'from-slate-600 to-slate-800',
     questions: [
       { key: 'problem_solving', label: 'What types of problems do you enjoy solving?' },
       { key: 'problem_method', label: 'How do you typically approach problem-solving?' },
@@ -35,7 +35,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Work Style',
     icon: Briefcase,
-    color: '#f97316',
+    color: 'from-orange-500 to-red-500',
     questions: [
       { key: 'work_style', label: 'Do you prefer working alone, in teams, or a mix?' },
       { key: 'work_routine', label: 'Structured routines or flexible schedules?' },
@@ -45,7 +45,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Values',
     icon: Book,
-    color: '#6366f1',
+    color: 'from-indigo-500 to-purple-500',
     questions: [
       { key: 'values', label: 'What matters most to you in a career?', required: true },
       { key: 'values_why', label: 'Why are these values important to you?' },
@@ -55,7 +55,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Inspiration',
     icon: Sparkles,
-    color: '#ec4899',
+    color: 'from-pink-500 to-rose-500',
     questions: [
       { key: 'career_inspiration', label: 'What careers or professionals inspire you?' },
       { key: 'inspiration_standout', label: 'What makes them stand out to you?' },
@@ -65,7 +65,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Environment',
     icon: TrendingUp,
-    color: '#14b8a6',
+    color: 'from-teal-500 to-cyan-500',
     questions: [
       { key: 'environment_preference', label: 'What work environment do you thrive in?' },
       { key: 'environment_why', label: 'Why does this environment work best for you?' },
@@ -75,7 +75,7 @@ const QUESTIONS_CONFIG = [
   {
     section: 'Impact',
     icon: DollarSign,
-    color: '#64748b',
+    color: 'from-slate-500 to-indigo-600',
     questions: [
       { key: 'impact_preference', label: 'What kind of impact do you want to make?' },
       { key: 'impact_why', label: 'Why is this impact important to you?' }
@@ -172,571 +172,294 @@ const CareerPathFinder = () => {
 
   useEffect(() => {
     if (matches.length > 0 && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start', marginTop: '40px' });
     }
   }, [matches]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #1f2937 100%)',
-      padding: '48px 16px',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    }}>
-      <div style={{ maxWidth: '896px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '80px',
-            height: '80px',
-            background: 'rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            marginBottom: '24px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
-          }}>
-            <Briefcase style={{ width: '40px', height: '40px', color: 'white' }} />
-          </div>
-          <h1 style={{
-            fontSize: '56px',
-            fontWeight: '700',
-            color: 'white',
-            marginBottom: '16px',
-            letterSpacing: '-0.025em'
-          }}>
-            Career Path Finder
-          </h1>
-          <p style={{
-            fontSize: '20px',
-            color: 'rgba(255,255,255,0.8)',
-            maxWidth: '672px',
-            margin: '0 auto'
-          }}>
-            Discover careers that align with your passions, skills, and values
-          </p>
-        </div>
+    <div className="min-h-screen pt-12 pb-24 px-4 font-plus-jakarta relative">
+      <div className="bg-mesh" />
+      
+      {/* Dynamic Glass Blobs */}
+      <div className="glass-blob w-96 h-96 bg-blue-600/20 top-[-10%] left-[-10%]" />
+      <div className="glass-blob w-80 h-80 bg-indigo-600/20 bottom-[-5%] right-[-5%]" />
+      <div className="glass-blob w-72 h-72 bg-cyan-600/20 top-[40%] right-[10%] opacity-50" />
 
-        {/* Main Card */}
-        <div style={{
-          background: 'rgba(255,255,255,0.95)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '24px',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-          padding: '48px',
-          marginBottom: '32px'
-        }}>
-          {/* Progress Bar */}
-          <div style={{ marginBottom: '40px' }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '12px'
-            }}>
-              <span style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#374151'
-              }}>
-                Step {currentStep + 1} of {QUESTIONS_CONFIG.length}
-              </span>
-              <span style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#3b82f6'
-              }}>
-                {Math.round(progress)}% Complete
-              </span>
+      <div className="max-w-4xl mx-auto relative z-10">
+        {/* Header */}
+        <header className="text-center mb-16 fade-up">
+          <div className="inline-flex items-center justify-center p-5 mb-8 rounded-3xl glass shadow-2xl relative group">
+            <div className="absolute inset-0 bg-blue-500/30 blur-2xl group-hover:bg-blue-400/40 transition-all duration-500" />
+            <Briefcase className="w-12 h-12 text-white relative z-10" />
+          </div>
+          
+          <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight mb-4 inline-block">
+            <span className="text-gradient">Career Path Finder</span>
+            <span className="block h-2 bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500 mt-2 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)] animate-pulse" />
+          </h1>
+          
+          <p className="text-xl text-slate-400/80 max-w-2xl mx-auto leading-relaxed mt-6">
+            Discover careers that align with your <span className="text-blue-400 font-semibold">passions</span>, 
+            <span className="text-cyan-400 font-semibold"> skills</span>, and 
+            <span className="text-indigo-400 font-semibold"> values</span> using our advanced AI-matching engine.
+          </p>
+        </header>
+
+        {/* Form Container */}
+        <main className="glass-card rounded-[32px] p-8 md:p-12 mb-12 fade-up" style={{ animationDelay: '0.2s' }}>
+          {/* Step Indicator */}
+          <div className="flex flex-col gap-4 mb-12">
+            <div className="flex justify-between items-end">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Status</p>
+                <h3 className="text-xl font-bold text-white">
+                  {currentSection.section} <span className="text-slate-500 ml-2">({currentStep + 1}/{QUESTIONS_CONFIG.length})</span>
+                </h3>
+              </div>
+              <div className="text-right">
+                <p className="text-4xl font-extrabold italic text-primary-gradient">
+                  {Math.round(progress)}%
+                </p>
+              </div>
             </div>
-            <div style={{
-              width: '100%',
-              height: '12px',
-              background: '#f3f4f6',
-              borderRadius: '999px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                width: `${progress}%`,
-                height: '100%',
-                background: 'linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%)',
-                borderRadius: '999px',
-                transition: 'width 0.5s ease-out'
-              }} />
+            
+            <div className="h-2 w-full bg-slate-800/50 rounded-full overflow-hidden border border-white/5">
+              <div 
+                className="h-full progress-fill rounded-full shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-700 ease-in-out" 
+                style={{ width: `${progress}%` }} 
+              />
             </div>
           </div>
 
           {/* Section Header */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginBottom: '32px'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '64px',
-              height: '64px',
-              background: currentSection.color,
-              borderRadius: '16px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-            }}>
-              <SectionIcon style={{ width: '32px', height: '32px', color: 'white' }} />
+          <div className="flex items-center gap-6 mb-10">
+            <div className={`p-4 rounded-2xl bg-gradient-to-br ${currentSection.color} shadow-lg shadow-black/20`}>
+              <SectionIcon className="w-8 h-8 text-white" />
             </div>
-            <h2 style={{
-              fontSize: '36px',
-              fontWeight: '700',
-              color: '#111827'
-            }}>
-              {currentSection.section}
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight text-white">{currentSection.section} Analysis</h2>
           </div>
 
-          {/* Questions */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          {/* Form Fields */}
+          <div className="space-y-10">
             {currentSection.questions.map((q) => (
-              <div key={q.key}>
-                <label style={{ display: 'block', marginBottom: '12px' }}>
-                  <span style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#1f2937'
-                  }}>
+              <div key={q.key} className="group transition-all duration-300">
+                <label className="block mb-4">
+                  <span className="text-lg font-semibold text-slate-200 group-focus-within:text-blue-400 transition-colors">
                     {q.label}
-                    {q.required && <span style={{ color: '#ef4444', marginLeft: '4px' }}>*</span>}
+                    {q.required && <span className="text-rose-500 ml-1.5">*</span>}
                   </span>
                 </label>
-                <textarea
-                  value={formData[q.key]}
-                  onChange={(e) => handleChange(q.key, e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '16px 20px',
-                    border: validationErrors[q.key] ? '2px solid #f87171' : '2px solid #e5e7eb',
-                    borderRadius: '12px',
-                    fontSize: '15px',
-                    color: '#1f2937',
-                    background: validationErrors[q.key] ? '#fef2f2' : 'white',
-                    fontFamily: 'inherit',
-                    resize: 'vertical',
-                    minHeight: '100px',
-                    outline: 'none',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    if (!validationErrors[q.key]) {
-                      e.target.style.borderColor = '#3b82f6';
-                      e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)';
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (!validationErrors[q.key]) {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.boxShadow = 'none';
-                    }
-                  }}
-                  placeholder="Share your thoughts in detail..."
-                  aria-label={q.label}
-                  aria-required={q.required}
-                  aria-invalid={!!validationErrors[q.key]}
-                />
-                {validationErrors[q.key] && (
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    marginTop: '8px',
-                    color: '#dc2626',
-                    fontSize: '14px'
-                  }}>
-                    <AlertCircle style={{ width: '16px', height: '16px' }} />
-                    <span>{validationErrors[q.key]}</span>
-                  </div>
-                )}
+                
+                <div className="relative">
+                  <textarea
+                    value={formData[q.key]}
+                    onChange={(e) => handleChange(q.key, e.target.value)}
+                    className={`glass-input w-full px-6 py-5 rounded-2xl text-lg min-h-[140px] focus:outline-none placeholder-slate-600 resize-none ${
+                       validationErrors[q.key] ? 'border-rose-500/50 bg-rose-500/5' : ''
+                    }`}
+                    placeholder="Describe your thoughts in detail..."
+                  />
+                  {validationErrors[q.key] && (
+                    <div className="absolute -bottom-7 l-2 flex items-center gap-2 text-rose-400 text-sm font-medium">
+                      <AlertCircle className="w-4 h-4" />
+                      <span>{validationErrors[q.key]}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Navigation */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: '48px',
-            paddingTop: '32px',
-            borderTop: '2px solid #f3f4f6'
-          }}>
+          {/* Form Actions */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-16 pt-10 border-t border-white/5">
             <button
               onClick={prevStep}
               disabled={currentStep === 0}
-              style={{
-                padding: '12px 32px',
-                border: '2px solid #d1d5db',
-                borderRadius: '12px',
-                background: 'white',
-                color: '#374151',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
-                opacity: currentStep === 0 ? 0.4 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => {
-                if (currentStep !== 0) {
-                  e.currentTarget.style.background = '#f9fafb';
-                  e.currentTarget.style.borderColor = '#9ca3af';
-                }
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = 'white';
-                e.currentTarget.style.borderColor = '#d1d5db';
-              }}
+              className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all duration-300 border border-white/10 ${
+                currentStep === 0 
+                  ? 'opacity-20 cursor-not-allowed' 
+                  : 'hover:bg-white/5 hover:border-white/20 active:scale-95 text-slate-300 hover:text-white'
+              }`}
             >
-              Previous
+              <ChevronLeft className="w-5 h-5" />
+              Back
             </button>
 
             {currentStep === QUESTIONS_CONFIG.length - 1 ? (
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                style={{
-                  padding: '16px 40px',
-                  border: 'none',
-                  borderRadius: '12px',
-                  background: loading ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  boxShadow: loading ? 'none' : '0 4px 16px rgba(59, 130, 246, 0.4)',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-                onMouseOver={(e) => {
-                  if (!loading) {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(59, 130, 246, 0.5)';
-                  }
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = loading ? 'none' : '0 4px 16px rgba(59, 130, 246, 0.4)';
-                }}
+                className={`relative px-12 py-5 rounded-2xl font-extrabold text-white transition-all duration-300 active:scale-95 shadow-2xl flex items-center gap-3 ${
+                  loading 
+                    ? 'bg-slate-700 cursor-wait' 
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/40'
+                }`}
               >
-                {loading && (
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    border: '2px solid white',
-                    borderTopColor: 'transparent',
-                    borderRadius: '50%',
-                    animation: 'spin 0.8s linear infinite'
-                  }} />
+                {loading ? (
+                  <>
+                    <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Analyzing DNA...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-6 h-6" />
+                    <span>Find My Path</span>
+                  </>
                 )}
-                {loading ? 'Analyzing...' : 'Find My Careers'}
               </button>
             ) : (
               <button
                 onClick={nextStep}
-                style={{
-                  padding: '12px 32px',
-                  border: 'none',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-                  color: 'white',
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(59, 130, 246, 0.4)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
-                }}
+                className="flex items-center gap-2 px-10 py-5 rounded-2xl bg-white text-slate-950 font-extrabold transition-all duration-300 hover:bg-slate-100 hover:shadow-xl hover:shadow-white/10 active:scale-95"
               >
-                Next Step
+                Continue
+                <ChevronRight className="w-5 h-5" />
               </button>
             )}
           </div>
-        </div>
+        </main>
 
-        {/* Error Message */}
+        {/* Error State */}
         {error && (
-          <div style={{
-            background: '#fef2f2',
-            border: '2px solid #fca5a5',
-            borderRadius: '16px',
-            padding: '24px',
-            marginBottom: '32px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '12px'
-            }}>
-              <AlertCircle style={{
-                width: '24px',
-                height: '24px',
-                color: '#dc2626',
-                flexShrink: 0,
-                marginTop: '2px'
-              }} />
+          <div className="glass-card mb-12 border-rose-500/30 bg-rose-500/5 p-8 rounded-[24px] fade-up shadow-lg">
+            <div className="flex gap-4 items-start">
+              <div className="p-3 bg-rose-500/20 rounded-xl">
+                <AlertCircle className="w-6 h-6 text-rose-400" />
+              </div>
               <div>
-                <h3 style={{
-                  fontWeight: '600',
-                  color: '#7f1d1d',
-                  marginBottom: '4px'
-                }}>
-                  Connection Error
-                </h3>
-                <p style={{ color: '#b91c1c', margin: 0 }}>{error}</p>
+                <h4 className="text-xl font-bold text-rose-200 mb-1">System Interruption</h4>
+                <p className="text-rose-300 opacity-80 leading-relaxed">{error}</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Results */}
+        {/* Results Visualizer */}
         {matches.length > 0 && (
-          <div ref={resultsRef} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <h2 style={{
-                fontSize: '36px',
-                fontWeight: '700',
-                color: 'white',
-                marginBottom: '12px'
-              }}>
-                Your Top Career Matches
-              </h2>
-              <p style={{
-                fontSize: '18px',
-                color: 'rgba(255,255,255,0.7)'
-              }}>
-                Based on your unique profile, here are {matches.length} careers tailored for you
+          <section ref={resultsRef} className="space-y-12 pb-32 fade-up">
+            <div className="text-center mb-16 pt-8">
+              <div className="inline-block px-4 py-1.5 rounded-full glass border-white/10 mb-4">
+                <span className="text-xs font-black uppercase tracking-widest text-blue-400">Match Results</span>
+              </div>
+              <h2 className="text-5xl font-extrabold text-white mb-6">Your Evolution Profile</h2>
+              <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">
+                Our AI has analyzed your input against {matches.length} specialized career sectors. 
+                Here are the paths where your potential shines brightest.
               </p>
             </div>
 
-            {matches.map((match, idx) => (
-              <div
-                key={idx}
-                style={{
-                  background: 'white',
-                  borderRadius: '24px',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-                  padding: '32px',
-                  transition: 'all 0.3s'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
-                }}
-              >
-                {/* Header */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  flexWrap: 'wrap',
-                  gap: '16px',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{
-                    fontSize: '28px',
-                    fontWeight: '700',
-                    color: '#111827',
-                    margin: 0
-                  }}>
-                    {match.job_title}
-                  </h3>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 20px',
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-                    color: 'white',
-                    borderRadius: '999px',
-                    fontWeight: '700',
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
-                  }}>
-                    {match.match_percentage.toFixed(1)}% Match
-                  </div>
-                </div>
+            <div className="space-y-8">
+              {matches.map((match, idx) => (
+                <div 
+                  key={idx} 
+                  className="glass-card rounded-[32px] overflow-hidden group hover:border-blue-500/30 border border-white/5 transition-all duration-500"
+                >
+                  <div className="p-8 md:p-12">
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+                      <div>
+                        <h3 className="text-4xl font-black text-white group-hover:text-blue-400 transition-colors mb-4 leading-tight">
+                          {match.job_title}
+                        </h3>
+                        <div className="flex items-center gap-4">
+                          <span className="px-4 py-1.5 rounded-lg glass-input text-sm font-bold border-white/5 bg-white/5">
+                            {match.industry || 'Tech Sector'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="relative group/score">
+                        <div className="absolute inset-0 bg-blue-500/20 blur-xl opacity-0 group-hover/score:opacity-100 transition-opacity duration-700" />
+                        <div className="relative glass-card border-white/10 px-8 py-5 rounded-[20px] text-center">
+                          <p className="text-xs font-black text-slate-500 uppercase tracking-tighter mb-1">Affinity</p>
+                          <p className="text-4xl font-black text-primary-gradient">
+                            {Math.round(match.match_percentage)}%
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* Description */}
-                <p style={{
-                  color: '#4b5563',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  marginBottom: '24px'
-                }}>
-                  {match.description}
-                </p>
-
-                {/* Reasoning */}
-                <div style={{
-                  background: 'linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  marginBottom: '24px',
-                  border: '1px solid #bfdbfe'
-                }}>
-                  <h4 style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    color: '#111827',
-                    marginBottom: '12px'
-                  }}>
-                    <CheckCircle style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
-                    Why This Matches You
-                  </h4>
-                  <p style={{
-                    color: '#374151',
-                    lineHeight: '1.6',
-                    margin: 0
-                  }}>
-                    {match.reasoning}
-                  </p>
-                </div>
-
-                {/* Skills */}
-                {match.skills && (
-                  <div style={{ marginBottom: '24px' }}>
-                    <h4 style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '16px',
-                      fontWeight: '700',
-                      color: '#111827',
-                      marginBottom: '12px'
-                    }}>
-                      <TrendingUp style={{ width: '20px', height: '20px', color: '#06b6d4' }} />
-                      Required Skills
-                    </h4>
-                    <p style={{
-                      color: '#4b5563',
-                      lineHeight: '1.6',
-                      margin: 0
-                    }}>
-                      {match.skills}
+                    <p className="text-xl text-slate-300/90 leading-relaxed mb-10">
+                      {match.description}
                     </p>
-                  </div>
-                )}
 
-                {/* Metadata Grid */}
-                {(match.salary_range || match.education || match.industry) && (
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                    gap: '16px',
-                    paddingTop: '24px',
-                    borderTop: '2px solid #f3f4f6'
-                  }}>
-                    {match.salary_range && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <DollarSign style={{ width: '20px', height: '20px', color: '#10b981' }} />
-                        <div>
-                          <div style={{
-                            fontSize: '11px',
-                            color: '#6b7280',
-                            fontWeight: '600',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            marginBottom: '4px'
-                          }}>
-                            Salary
-                          </div>
-                          <div style={{
-                            fontSize: '14px',
-                            color: '#111827',
-                            fontWeight: '600'
-                          }}>
-                            {match.salary_range}
-                          </div>
+                    <div className="grid md:grid-cols-2 gap-8 mb-10">
+                      {/* Why Section */}
+                      <div className="p-8 rounded-[24px] bg-slate-950/40 border border-white/5 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-500 hover:border-blue-500/20">
+                        <div className="flex items-center gap-3 mb-4 text-blue-400">
+                          <CheckCircle className="w-6 h-6" />
+                          <h4 className="text-lg font-bold">The Resonance</h4>
+                        </div>
+                        <p className="text-slate-400 leading-relaxed italic">
+                          "{match.reasoning}"
+                        </p>
+                      </div>
+
+                      {/* Skills Section */}
+                      <div className="p-8 rounded-[24px] bg-slate-950/40 border border-white/5 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-500 hover:border-cyan-500/20">
+                        <div className="flex items-center gap-3 mb-4 text-cyan-400">
+                          <TrendingUp className="w-6 h-6" />
+                          <h4 className="text-lg font-bold">DNA Markers</h4>
+                        </div>
+                        <div className="flex flex-wrap gap-2 uppercase font-black text-[10px] tracking-widest text-slate-500">
+                          {match.skills ? match.skills.split(',').map((s, i) => (
+                            <span key={i} className="px-3 py-1 bg-white/5 rounded-md border border-white/5">{s.trim()}</span>
+                          )) : 'N/A'}
                         </div>
                       </div>
-                    )}
-                    {match.education && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Book style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
-                        <div>
-                          <div style={{
-                            fontSize: '11px',
-                            color: '#6b7280',
-                            fontWeight: '600',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            marginBottom: '4px'
-                          }}>
-                            Education
-                          </div>
-                          <div style={{
-                            fontSize: '14px',
-                            color: '#111827',
-                            fontWeight: '600'
-                          }}>
-                            {match.education}
-                          </div>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-white/5">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-slate-500 mb-1">
+                          <DollarSign className="w-4 h-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Potential</span>
                         </div>
+                        <p className="text-white font-bold">{match.salary_range || 'Competitive'}</p>
                       </div>
-                    )}
-                    {match.industry && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Briefcase style={{ width: '20px', height: '20px', color: '#64748b' }} />
-                        <div>
-                          <div style={{
-                            fontSize: '11px',
-                            color: '#6b7280',
-                            fontWeight: '600',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            marginBottom: '4px'
-                          }}>
-                            Industry
-                          </div>
-                          <div style={{
-                            fontSize: '14px',
-                            color: '#111827',
-                            fontWeight: '600'
-                          }}>
-                            {match.industry}
-                          </div>
+
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-slate-500 mb-1">
+                          <GraduationCap className="w-4 h-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Baseline</span>
                         </div>
+                        <p className="text-white font-bold">{match.education || 'Self-Taught / Degree'}</p>
                       </div>
-                    )}
+
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-slate-500 mb-1">
+                          <Globe className="w-4 h-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Global Focus</span>
+                        </div>
+                        <p className="text-white font-bold">{match.industry || 'Market Wide'}</p>
+                      </div>
+
+                      <div className="grid grid-cols-1 mt-auto">
+                        <button className="text-xs font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 ml-auto group/learn">
+                          Deep Dive Profile
+                          <ChevronRight className="w-4 h-4 transition-transform group-hover/learn:translate-x-1" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
       </div>
 
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+      <footer className="max-w-4xl mx-auto py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5 opacity-40">
+        <div className="flex items-center gap-4">
+          <Briefcase className="w-6 h-6" />
+          <span className="font-bold tracking-tighter">CareerSync AI v0.4.5</span>
+        </div>
+        <div className="flex gap-8 text-xs font-bold uppercase tracking-widest">
+          <a href="#" className="hover:text-blue-400">System Status</a>
+          <a href="#" className="hover:text-blue-400">Data Privacy</a>
+          <a href="#" className="hover:text-blue-400">Neural Log</a>
+        </div>
+      </footer>
     </div>
   );
 };
