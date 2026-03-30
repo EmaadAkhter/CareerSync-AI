@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+import torch
 from pinecone import Pinecone, ServerlessSpec
 import time
 
@@ -15,7 +16,11 @@ def get_model():
     """Lazy load and cache the model"""
     global _model_cache
     if _model_cache is None:
-        _model_cache = SentenceTransformer(EMBEDDING_MODEL)
+        _model_cache = SentenceTransformer(EMBEDDING_MODEL, device='cpu')
+        # Ensure model is in eval mode and doesn't track gradients
+        _model_cache.eval()
+        for param in _model_cache.parameters():
+            param.requires_grad = False
     return _model_cache
 
 
@@ -71,7 +76,8 @@ def search_by_query(query, top_k=5, index=None):
     if index is None:
         index = get_pinecone_index()
     model = get_model()
-    query_embedding = model.encode(query, convert_to_tensor=False).tolist()
+    with torch.no_grad():
+        query_embedding = model.encode(query, convert_to_tensor=False, show_progress_bar=False).tolist()
 
     results = index.query(
         vector=query_embedding,

@@ -5,6 +5,13 @@ from embedder_utils import get_pinecone_index, search_by_query
 from contextlib import asynccontextmanager
 import gc
 import asyncio
+import os
+import torch
+
+# Limit torch threading for memory efficiency
+torch.set_num_threads(1)
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
 
 index = None
 
@@ -148,7 +155,12 @@ async def match_careers(form_data: CareerFormData):
             raise HTTPException(status_code=504, detail="Search request timed out")
 
         matches = transform_to_career_matches(results, form_data)
+        
+        # Explicitly clear intermediate variables and collect garbage
+        del results
         gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
         return {"matches": matches}
 
