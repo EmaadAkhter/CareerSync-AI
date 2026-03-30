@@ -16,18 +16,28 @@ os.environ["MKL_NUM_THREADS"] = "1"
 index = None
 
 
+def get_index():
+    """Lazy load the Pinecone index"""
+    global index
+    if index is None:
+        try:
+            print("Connecting to Pinecone index...")
+            index = get_pinecone_index()
+            print("Successfully connected to Pinecone index.")
+        except Exception as e:
+            print(f"Failed to connect to Pinecone: {e}")
+            raise HTTPException(status_code=500, detail="Database connection failed")
+    return index
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global index
-
-    try:
-        index = get_pinecone_index()
-        stats = index.describe_index_stats()
-        print(f"Connected to Pinecone. Total vectors: {stats['total_vector_count']}")
-    except Exception as e:
-        print(f"Error connecting to Pinecone: {e}")
-        raise
-
+    # Minimal lifespan to ensure port binding happens immediately
+    port = os.getenv("PORT", "8000")
+    print(f"Application starting on port: {port}")
+    
+    # We no longer block startup with Pinecone stats check
+    # Instead, we just ensure we can reach Pinecone lazily inside request handlers
     yield
 
 
@@ -91,7 +101,7 @@ def build_career_query(form_data: CareerFormData) -> str:
 
 
 def search_careers(query: str, k: int = 5) -> list:
-    return search_by_query(query, top_k=k, index=index)
+    return search_by_query(query, top_k=k, index=get_index())
 
 
 def transform_to_career_matches(results: list, form_data: CareerFormData) -> list:
@@ -176,7 +186,9 @@ async def match_careers(form_data: CareerFormData):
 @app.head("/health")
 async def health_check():
     try:
-        stats = index.describe_index_stats()
+        # Avoid blocking health check if index isn't ready
+        current_index = get_index()
+        stats = current_index.describe_index_stats()
         
         try:
             import psutil
